@@ -16,5 +16,6 @@
   </PropertyGroup>
 
   <Import Project="$(MSBuildThisFileDirectory)version.props" />
+  
 
 </Project>
