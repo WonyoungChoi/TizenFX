@@ -21,7 +21,7 @@ usage() {
   echo "    pack [version]     Make a NuGet package with build artifacts"
   echo "    clean              Clean all artifacts"
 }
-
+ 
 cmd_build() {
   if [ -z "$1" ]; then
     echo "No module specified."
