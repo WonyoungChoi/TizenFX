@@ -20,12 +20,12 @@ using System.Runtime.InteropServices;
 using Tizen.Uix.InputMethod;
 
 /// <summary>
-/// The Partial Interop class.
+/// Partial Interop Class
 /// </summary>
 internal static partial class Interop
 {
     /// <summary>
-    /// The EinaList Interop class.
+    /// EinaList Interop Class
     /// </summary>
     internal static class EinaList
     {

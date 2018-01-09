@@ -166,9 +166,6 @@ namespace Tizen.Uix.VoiceControl
         /// <exception cref="NullReferenceException">This will occur if the provided parameter is null.</exception>
         public void Add(VoiceCommand command)
         {
-            if (null == command) {
-                throw new NullReferenceException("Null Parameter Provided");
-            }
             ErrorCode error = VcCmdListAdd(_handle, command._handle);
             if (error != ErrorCode.None)
             {
@@ -199,9 +196,6 @@ namespace Tizen.Uix.VoiceControl
         /// <exception cref="NullReferenceException">This will occur if the provided parameter is null.</exception>
         public void Remove(VoiceCommand command)
         {
-            if (null == command) {
-                throw new NullReferenceException("Null Parameter Provided");
-            }
             ErrorCode error = VcCmdListRemove(_handle, command._handle);
             if (error != ErrorCode.None)
             {

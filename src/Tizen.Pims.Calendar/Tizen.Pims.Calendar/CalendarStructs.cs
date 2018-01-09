@@ -19,7 +19,7 @@ using System;
 namespace Tizen.Pims.Calendar
 {
     /// <summary>
-    /// A class for the time to set, get, or calculate.
+    /// A class for time to set, get or calculate.
     /// </summary>
     /// <since_tizen> 4 </since_tizen>
     public class CalendarTime:IComparable<CalendarTime>
@@ -34,22 +34,22 @@ namespace Tizen.Pims.Calendar
         public enum Type
         {
             /// <summary>
-            /// UTC time.
+            /// UTC time
             /// </summary>
             /// <since_tizen> 4 </since_tizen>
             Utc,
             /// <summary>
-            /// Local time.
+            /// Local time
             /// </summary>
             /// <since_tizen> 4 </since_tizen>
             Local
         }
 
         /// <summary>
-        /// Creates the UTC CalendarTime.
+        /// Create UTC CalendarTime
         /// </summary>
         /// <since_tizen> 4 </since_tizen>
-        /// <param name="utcTime">The UTC epoch time. 0 is 1971/01/01.</param>
+        /// <param name="utcTime">UTC epoch time. 0 is 1971/01/01</param>
         public CalendarTime(long utcTime)
         {
             _type = (int)Type.Utc;
@@ -58,15 +58,15 @@ namespace Tizen.Pims.Calendar
         }
 
         /// <summary>
-        /// Creates the local CalendarTime
+        /// Create Local CalendarTime
         /// </summary>
         /// <since_tizen> 4 </since_tizen>
-        /// <param name="year">The year.</param>
-        /// <param name="month">The month.</param>
-        /// <param name="day">The day.</param>
-        /// <param name="hour">The hour.</param>
-        /// <param name="minute">The minute.</param>
-        /// <param name="second">The second.</param>
+        /// <param name="year">year</param>
+        /// <param name="month">month</param>
+        /// <param name="day">day</param>
+        /// <param name="hour">hour</param>
+        /// <param name="minute">minute</param>
+        /// <param name="second">second</param>
         public CalendarTime(int year, int month, int day, int hour, int minute, int second)
         {
             _type = (int)Type.Local;
@@ -74,30 +74,30 @@ namespace Tizen.Pims.Calendar
         }
 
         /// <summary>
-        /// Gets the UtcTime.
+        /// Get UtcTime
         /// </summary>
         /// <since_tizen> 4 </since_tizen>
-        /// <value>The UTC time.</value>
+        /// <value>The Utc time</value>
         public DateTime UtcTime
         {
             get;
         }
 
         /// <summary>
-        /// Gets the LocalTime
+        /// Get localTime
         /// </summary>
         /// <since_tizen> 4 </since_tizen>
-        /// <value>The local time.</value>
+        /// <value>The Localtime</value>
         public DateTime LocalTime
         {
             get;
         }
 
         /// <summary>
-        /// Compares the CalendarTime.
+        /// Compare CalendarTime
         /// </summary>
         /// <since_tizen> 4 </since_tizen>
-        /// <param name="other">The CalendarTime to be compared.</param>
+        /// <param name="other">The CalendarTime to be compared</param>
         /// <returns>
         /// A 32-bit signed integer that indicates the relative order of the objects being compared.
         /// </returns>
@@ -116,10 +116,10 @@ namespace Tizen.Pims.Calendar
         }
 
         /// <summary>
-        /// Equals the CalendarTime.
+        /// Equals CalendarTime
         /// </summary>
         /// <since_tizen> 4 </since_tizen>
-        /// <param name="obj">The CalendarTime to be compared.</param>
+        /// <param name="obj">The CalendarTime to be compared</param>
         /// <returns>
         /// A 32-bit signed integer that indicates the relative order of the objects being compared.
         /// </returns>
@@ -139,7 +139,7 @@ namespace Tizen.Pims.Calendar
         }
 
         /// <summary>
-        /// The GetHashCode for the CalendarTime.
+        /// GetHashCode CalendarTime
         /// </summary>
         /// <since_tizen> 4 </since_tizen>
         /// <returns>

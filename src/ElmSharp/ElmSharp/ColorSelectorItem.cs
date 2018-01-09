@@ -19,7 +19,7 @@ using System;
 namespace ElmSharp
 {
     /// <summary>
-    /// An instance to the ColorSelector item gets added.
+    /// A instance to the ColorSelector item added.
     /// </summary>
     /// <since_tizen> preview </since_tizen>
     public class ColorSelectorItem : ItemObject
@@ -29,7 +29,7 @@ namespace ElmSharp
         }
 
         /// <summary>
-        /// Gets or sets the palette item's color.
+        /// Gets or sets the Palette item's color
         /// </summary>
         /// <since_tizen> preview </since_tizen>
         public Color Color

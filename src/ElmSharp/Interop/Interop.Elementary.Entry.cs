@@ -22,7 +22,7 @@ internal static partial class Interop
     internal static partial class Elementary
     {
         /// <summary>
-        /// Types of "Enter" keys available for different keyboard layouts.
+        /// Types of "Enter" keys available for different keyboards layout
         /// </summary>
         public enum ReturnKeyType
         {

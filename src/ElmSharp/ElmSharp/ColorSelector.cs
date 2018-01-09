@@ -19,42 +19,42 @@ using System;
 namespace ElmSharp
 {
     /// <summary>
-    /// Enumeration for the modes of ColorSelector.
+    /// Enumeration for mode of ColorSelector
     /// </summary>
     /// <since_tizen> preview </since_tizen>
     public enum ColorSelectorMode
     {
         /// <summary>
-        /// Only the color palette is displayed, by default.
+        /// Only color palette is displayed, default
         /// </summary>
         Palette,
         /// <summary>
-        /// Only the color selector is displayed.
+        /// Only color selector is displayed
         /// </summary>
         [Obsolete("Components is obsolete as of version 1.2.3 and is no longer supported.")]
         Components,
         /// <summary>
-        /// Both the palette and the selector is displayed.
+        /// Both Palette and selector is displayed
         /// </summary>
         [Obsolete("Both is obsolete as of version 1.2.3 and is no longer supported.")]
         Both,
         /// <summary>
-        /// Only the color picker is displayed.
+        /// Only color picker is displayed
         /// </summary>
         [Obsolete("Picker is obsolete as of version 1.2.3 and is no longer supported.")]
         Picker,
         /// <summary>
-        /// This mode is not supported. If you use this, nothing will be shown.
+        /// This mode is not supported. If you use this, nothing will be shown
         /// </summary>
         [Obsolete("Plane is obsolete as of version 1.2.3 and is no longer supported.")]
         Plane,
         /// <summary>
-        /// This mode is not supported. If you use this, it will be shown same with the Palette mode.
+        /// This mode is not supported. If you use this, it will be shown same with Palette mode
         /// </summary>
         [Obsolete("PallettePlane is obsolete as of version 1.2.3 and is no longer supported.")]
         PallettePlane,
         /// <summary>
-        /// This mode is not supported. If you use this, it will be shown same with the Palette mode.
+        /// This mode is not supported. If you use this, it will be shown same with Palette mode
         /// </summary>
         [Obsolete("All is obsolete as of version 1.2.3 and is no longer supported.")]
         All
@@ -62,12 +62,12 @@ namespace ElmSharp
 
     /// <summary>
     /// The ColorSelector is a widget to set a series of colors.
-    /// It also allows to load/save colors from/to the configuration with a unique identifier.
+    /// It also allows to load/save colors from/to config with a unique identifier.
     /// </summary>
     /// <remarks>
-    /// By default, the colors are loaded/saved from/to configuration using the "default" identifier.
-    /// The colors can be picked by the user from the color set by clicking on individual
-    /// color items on the palette, or by selecting it from the selector.
+    /// By default, the colors are loaded/saved from/to config using "default" identifier.
+    /// The colors can be picked by user from the color set by clicking on individual
+    /// color item on the palette or by selecting it from selector.
     /// </remarks>
     /// <since_tizen> preview </since_tizen>
     public class ColorSelector : Layout
@@ -89,7 +89,7 @@ namespace ElmSharp
         }
 
         /// <summary>
-        /// ColorChanged will be triggered when the SelectedColor is changed.
+        /// ColorChanged will be triggered when the SelectedColor changed.
         /// </summary>
         /// <since_tizen> preview </since_tizen>
         public event EventHandler<ColorChangedEventArgs> ColorChanged
@@ -99,7 +99,7 @@ namespace ElmSharp
         }
 
         /// <summary>
-        /// Gets or sets the color of colorselector.
+        /// Gets or sets color of colorselector.
         /// </summary>
         /// <since_tizen> preview </since_tizen>
         public Color SelectedColor
@@ -119,7 +119,7 @@ namespace ElmSharp
         }
 
         /// <summary>
-        /// Gets the Alpha of a default Color class (value is -1).
+        /// Gets Alpha of a default Color Class(Value is -1).
         /// </summary>
         /// <since_tizen> preview </since_tizen>
         public override int Opacity
@@ -136,7 +136,7 @@ namespace ElmSharp
         }
 
         /// <summary>
-        /// Gets or sets the Colorselector's mode.
+        /// Gets or sets Colorselector's mode.
         /// </summary>
         /// <since_tizen> preview </since_tizen>
         public ColorSelectorMode Mode
@@ -155,7 +155,7 @@ namespace ElmSharp
         }
 
         /// <summary>
-        /// Gets or sets the current palette's name.
+        /// Get or set current palette's name.
         /// </summary>
         /// <since_tizen> preview </since_tizen>
         public string PaletteName
@@ -171,9 +171,9 @@ namespace ElmSharp
         }
 
         /// <summary>
-        /// Adds a new color item to the palette.
+        /// Adds a new color item to palette.
         /// </summary>
-        /// <param name="color">The color item to add.</param>
+        /// <param name="color">Color item to add</param>
         /// <returns>A new color palette Item.</returns>
         /// <since_tizen> preview </since_tizen>
         public ColorSelectorItem AddPaletteColor(Color color)
@@ -184,7 +184,7 @@ namespace ElmSharp
         }
 
         /// <summary>
-        /// Clears the palette items.
+        /// Clear the palette items.
         /// </summary>
         /// <since_tizen> preview </since_tizen>
         public void ClearPalette()
@@ -195,8 +195,8 @@ namespace ElmSharp
         /// <summary>
         /// Creates a widget handle.
         /// </summary>
-        /// <param name="parent">Parent EvasObject.</param>
-        /// <returns>Handle IntPtr.</returns>
+        /// <param name="parent">Parent EvasObject</param>
+        /// <returns>Handle IntPtr</returns>
         /// <since_tizen> preview </since_tizen>
         protected override IntPtr CreateHandle(EvasObject parent)
         {

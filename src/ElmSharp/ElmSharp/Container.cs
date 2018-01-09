@@ -21,8 +21,8 @@ namespace ElmSharp
 {
     /// <summary>
     /// It inherits <see cref="Widget"/>.
-    /// The Container is an abstract class.
-    /// The other class inherits it to elementary, which is about displaying
+    /// The Container is a abstract class.
+    /// Other class inherits it to Elementary is about displaying
     /// its widgets in a nice layout.
     /// </summary>
     /// <since_tizen> preview </since_tizen>
@@ -31,17 +31,17 @@ namespace ElmSharp
         HashSet<EvasObject> _children = new HashSet<EvasObject>();
 
         /// <summary>
-        /// Creates and initializes a new instance of the class, which inherit from the Container.
+        /// Creates and initializes a new instance of class which inherit from Container.
         /// </summary>
-        /// <param name="parent">The parent is a given object, which will be attached by the Container
-        /// as a child. It's <see cref="EvasObject"/> type.</param>
+        /// <param name="parent">The parent is a given object which will be attached by Container
+        /// as a child.It's <see cref="EvasObject"/> type.</param>
         /// <since_tizen> preview </since_tizen>
         public Container(EvasObject parent) : base(parent)
         {
         }
 
         /// <summary>
-        /// Creates and initializes a new instance of the Container class.
+        /// Creates and initializes a new instance of Container class.
         /// </summary>
         /// <since_tizen> preview </since_tizen>
         protected Container() : base()
@@ -69,15 +69,15 @@ namespace ElmSharp
         }
 
         /// <summary>
-        /// Gets the collection of a child EvasObject of the Container.
+        /// Gets the collection of child EvasObject of the Container.
         /// </summary>
         /// <since_tizen> preview </since_tizen>
         protected IEnumerable<EvasObject> Children => _children;
 
         /// <summary>
-        /// Add the EvasObject object as a child of the Container.
+        /// Add an EvasObject object as a child of Container.
         /// </summary>
-        /// <param name="obj">The EvasObject object to be added.</param>
+        /// <param name="obj">The EvasObject object to be added</param>
         /// <since_tizen> preview </since_tizen>
         protected void AddChild(EvasObject obj)
         {
@@ -86,9 +86,9 @@ namespace ElmSharp
         }
 
         /// <summary>
-        /// Removes the EvasObject object as a child of the Container.
+        /// Remove an EvasObject object as a child of Container.
         /// </summary>
-        /// <param name="obj">The EvasObject object to be removed.</param>
+        /// <param name="obj">The EvasObject object to be removed</param>
         /// <since_tizen> preview </since_tizen>
         protected void RemoveChild(EvasObject obj)
         {
@@ -96,7 +96,7 @@ namespace ElmSharp
         }
 
         /// <summary>
-        /// Clears all the children of the Container.
+        /// Clear all children of the Container.
         /// </summary>
         /// <since_tizen> preview </since_tizen>
         protected void ClearChildren()
@@ -105,9 +105,9 @@ namespace ElmSharp
         }
 
         /// <summary>
-        /// The Container callback that is invoked when a child is removed.
+        /// The Container Callback that is invoked when a child is removed.
         /// </summary>
-        /// <param name="sender">The called Container.</param>
+        /// <param name="sender">The called Container</param>
         /// <param name="a"><see cref="EventArgs"/></param>
         void OnChildDeleted(object sender, EventArgs a)
         {

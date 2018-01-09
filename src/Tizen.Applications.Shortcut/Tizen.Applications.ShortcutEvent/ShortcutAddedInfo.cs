@@ -17,7 +17,7 @@
 namespace Tizen.Applications.Shortcut
 {
     /// <summary>
-    /// A class for getting the information of the shortcut.
+    /// A class for getting information of the Shortcut.
     /// </summary>
     /// <since_tizen> 4 </since_tizen>
     public class ShortcutAddedInfo

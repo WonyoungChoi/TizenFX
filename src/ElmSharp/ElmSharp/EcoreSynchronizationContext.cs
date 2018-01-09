@@ -20,7 +20,7 @@ namespace ElmSharp
 {
 
     /// <summary>
-    /// Provides a synchronization context for the EFL application.
+    /// Provides a synchronization context for the efl application.
     /// </summary>
     /// <since_tizen> preview </since_tizen>
     public class EcoreSynchronizationContext : SynchronizationContext
@@ -34,7 +34,7 @@ namespace ElmSharp
         }
 
         /// <summary>
-        /// Initilizes a new EcoreSynchronizationContext and installs into the current thread.
+        /// Initilizes a new EcoreSynchronizationContext and install into current thread
         /// </summary>
         /// <remarks>
         /// It is equivalent
@@ -64,7 +64,7 @@ namespace ElmSharp
         }
 
         /// <summary>
-        /// Dispatches an synchronous message to a Ecore main loop.
+        /// Dispatches a synchronous message to a Ecore main loop
         /// </summary>
         /// <param name="d"><see cref="System.Threading.SendOrPostCallback"/>The SendOrPostCallback delegate to call.</param>
         /// <param name="state"><see cref="System.Object"/>The object passed to the delegate.</param>

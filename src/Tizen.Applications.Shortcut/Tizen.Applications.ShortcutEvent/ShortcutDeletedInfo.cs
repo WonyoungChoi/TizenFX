@@ -17,13 +17,13 @@
 namespace Tizen.Applications.Shortcut
 {
     /// <summary>
-    /// A class for getting the information of the shortcut.
+    /// A class for getting information of the Shortcut.
     /// </summary>
     /// <since_tizen> 4 </since_tizen>
     public class ShortcutDeletedInfo
     {
         /// <summary>
-        /// Gets the name of the package.
+        /// Gets the name of package.
         /// </summary>
         /// <since_tizen> 4 </since_tizen>
         public string AppId { get; internal set; }

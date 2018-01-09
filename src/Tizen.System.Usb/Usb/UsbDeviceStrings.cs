@@ -19,9 +19,9 @@ using System;
 namespace Tizen.System.Usb
 {
     /// <summary>
-    /// String information for the USB device.
+    /// String information for USB device.
     /// </summary>
-    /// <since_tizen> 4 </since_tizen>
+    /// <since_tizen> 5 </since_tizen>
     public class UsbDeviceStrings
     {
         private readonly UsbDevice _device;
@@ -36,11 +36,11 @@ namespace Tizen.System.Usb
         }
 
         /// <summary>
-        /// Gets the string describing the device manufacturer.
+        /// Gets string describing device manufacturer.
         /// </summary>
         /// <feature>http://tizen.org/feature/usb.host</feature>
         /// <exception cref="NotSupportedException">The required feature is not supported.</exception>
-        /// <since_tizen> 4 </since_tizen>
+        /// <since_tizen> 5 </since_tizen>
         public string Manufacturer
         {
             get
@@ -51,11 +51,11 @@ namespace Tizen.System.Usb
         }
 
         /// <summary>
-        /// Gets the product string of a device.
+        /// Gets product string of device
         /// </summary>
         /// <feature>http://tizen.org/feature/usb.host</feature>
         /// <exception cref="NotSupportedException">The required feature is not supported.</exception>
-        /// <since_tizen> 4 </since_tizen>
+        /// <since_tizen> 5 </since_tizen>
         public string Product
         {
             get
@@ -66,11 +66,11 @@ namespace Tizen.System.Usb
         }
 
         /// <summary>
-        /// Gets the serial number of a device.
+        /// Gets serial number of a device.
         /// </summary>
         /// <feature>http://tizen.org/feature/usb.host</feature>
         /// <exception cref="NotSupportedException">The required feature is not supported.</exception>
-        /// <since_tizen> 4 </since_tizen>
+        /// <since_tizen> 5 </since_tizen>
         public string Serial
         {
             get

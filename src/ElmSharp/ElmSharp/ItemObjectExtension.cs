@@ -19,15 +19,15 @@ using System;
 namespace ElmSharp
 {
     /// <summary>
-    /// The ItemObjectExtension is used to manage the item object extension.
+    /// The ItemObjectExtension is used to manage item object extension
     /// </summary>
     /// <since_tizen> preview </since_tizen>
     public static class ItemObjectExtension
     {
         /// <summary>
-        /// Grabs the highlight of the item object.
+        /// Grab high light of item object
         /// </summary>
-        /// <param name="obj">The item object, which has grabbed the highlight.</param>
+        /// <param name="obj">the item object which is grabbed high light</param>
         /// <since_tizen> preview </since_tizen>
         public static void GrabHighlight(this ItemObject obj)
         {
@@ -35,9 +35,9 @@ namespace ElmSharp
         }
 
         /// <summary>
-        /// Clears the highlight of the item object.
+        /// Clear high light of item object
         /// </summary>
-        /// <param name="obj">The item object, which has cleared the highlight.</param>
+        /// <param name="obj">the item object which is cleared high light</param>
         /// <since_tizen> preview </since_tizen>
         public static void ClearHighlight(this ItemObject obj)
         {
