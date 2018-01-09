@@ -35,6 +35,12 @@ namespace Tizen.Multimedia
         /// <summary>
         /// Occurs when the playback of a media is interrupted.
         /// </summary>
+        /// <remarks>
+        /// If the reason is <see cref="PlaybackInterruptionReason.ResourceConflict"/>,
+        /// the player state will be one of <see cref="PlayerState.Idle"/>, <see cref="PlayerState.Ready"/>,
+        /// or <see cref="PlayerState.Paused"/>.
+        /// </remarks>
+        /// <seealso cref="Player.State"/>
         /// <since_tizen> 3 </since_tizen>
         public event EventHandler<PlaybackInterruptedEventArgs> PlaybackInterrupted;
         private NativePlayer.PlaybackInterruptedCallback _playbackInterruptedCallback;
@@ -217,8 +223,6 @@ namespace Tizen.Multimedia
 
         private void RegisterVideoStreamChangedCallback()
         {
-            ValidatePlayerState(PlayerState.Idle);
-
             _videoStreamChangedCallback = (width, height, fps, bitrate, _) =>
             {
                 Log.Debug(PlayerLog.Tag, "height : " + height + ", width : " + width
