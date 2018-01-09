@@ -22,7 +22,7 @@ using System.Text;
 namespace ElmSharp.Wearable
 {
     /// <summary>
-    /// The RotaryEventManager serves functions for the global Rotary event like Galaxy Gear.
+    /// RotaryEventManager serve functions for global Rotary event like Galaxy Gear.
     /// </summary>
     /// <since_tizen> preview </since_tizen>
     public static class RotaryEventManager
@@ -30,7 +30,7 @@ namespace ElmSharp.Wearable
         static Dictionary<RotaryEventHandler, Interop.Eext.Eext_Rotary_Handler_Cb> s_rotaryEventHandlers = new Dictionary<RotaryEventHandler, Interop.Eext.Eext_Rotary_Handler_Cb>();
 
         /// <summary>
-        /// Rotated will be triggered when the rotatable device like the Galaxy Gear Bezel is rotated.
+        /// Rotated will triggered when rotatable device like Galaxy Gear Bezel is rotated.
         /// </summary>
         /// <since_tizen> preview </since_tizen>
         public static event RotaryEventHandler Rotated
@@ -67,7 +67,7 @@ namespace ElmSharp.Wearable
 
 
     /// <summary>
-    /// The RotaryEventManager serves extension functions for the Rotary event to EvasObject on a device like Galaxy Gear.
+    /// RotaryEventManager serve extension functions for Rotary event to EvasObject on device like Galaxy Gear.
     /// </summary>
     /// <since_tizen> preview </since_tizen>
     public static class RotaryEventExtensions
@@ -76,10 +76,10 @@ namespace ElmSharp.Wearable
         static Dictionary<EvasObject, Interop.Eext.Eext_Rotary_Event_Cb> s_rotaryObjectEventMap = new Dictionary<EvasObject, Interop.Eext.Eext_Rotary_Event_Cb>();
 
         /// <summary>
-        /// Adds a handler for the Rotary event on a specific EvasObject.
+        /// Add a handler for Rotary event on specific EvasObject.
         /// </summary>
-        /// <param name="obj">Target EvasObject.</param>
-        /// <param name="handler">Event handler for the Rotary event.</param>
+        /// <param name="obj">Target EvasObject</param>
+        /// <param name="handler">Event handler for Rotary event</param>
         /// <since_tizen> preview </since_tizen>
         public static void AddRotaryEventHandler(this EvasObject obj, RotaryEventHandler handler)
         {
@@ -96,10 +96,10 @@ namespace ElmSharp.Wearable
         }
 
         /// <summary>
-        /// Removes a handler on a specific EvasObject for the Rotary event.
+        /// Remove a handler on specific EvasObject for Rotary event.
         /// </summary>
-        /// <param name="obj">Target EvasObject.</param>
-        /// <param name="handler">Event handler for Rotary event.</param>
+        /// <param name="obj">Target EvasObject</param>
+        /// <param name="handler">Event handler for Rotary event</param>
         /// <since_tizen> preview </since_tizen>
         public static void RemoveRotaryEventHandler(this EvasObject obj, RotaryEventHandler handler)
         {
@@ -115,9 +115,9 @@ namespace ElmSharp.Wearable
         }
 
         /// <summary>
-        /// Activates this Circle widget that can take the Rotary event.
+        /// Activate this circle widget can take Rotary event.
         /// </summary>
-        /// <param name="widget">Target the Circle widget.</param>
+        /// <param name="widget">Target circle widget</param>
         /// <since_tizen> preview </since_tizen>
         public static void Activate(this IRotaryActionWidget widget)
         {
@@ -125,9 +125,9 @@ namespace ElmSharp.Wearable
         }
 
         /// <summary>
-        /// Deactivates this circle widget that is blocked from the Rotary event.
+        /// Deactivate this circle widget is blocked from Rotary event.
         /// </summary>
-        /// <param name="widget">Target the Circle widget.</param>
+        /// <param name="widget">Target circle widget</param>
         /// <since_tizen> preview </since_tizen>
         public static void Deactivate(this IRotaryActionWidget widget)
         {
@@ -135,9 +135,9 @@ namespace ElmSharp.Wearable
         }
 
         /// <summary>
-        /// Activates this object that can take the Rotary event.
+        /// Activate this object can take Rotary event.
         /// </summary>
-        /// <param name="obj">Target object.</param>
+        /// <param name="obj">Target object</param>
         /// <since_tizen> preview </since_tizen>
         public static void Activate(this EvasObject obj)
         {
@@ -145,9 +145,9 @@ namespace ElmSharp.Wearable
         }
 
         /// <summary>
-        /// Deactivates this object that is blocked from the Rotary event.
+        /// Deactivate this object is blocked from Rotary event.
         /// </summary>
-        /// <param name="obj">Target object.</param>
+        /// <param name="obj">Target object</param>
         /// <since_tizen> preview </since_tizen>
         public static void Deactivate(this EvasObject obj)
         {
@@ -194,26 +194,26 @@ namespace ElmSharp.Wearable
     }
 
     /// <summary>
-    /// Handler for the Rotary event.
+    /// Handler for Rotary event
     /// </summary>
-    /// <param name="args">The Rotary event information.</param>
+    /// <param name="args">Rotary event information</param>
     /// <since_tizen> preview </since_tizen>
     public delegate void RotaryEventHandler(RotaryEventArgs args);
 
     /// <summary>
-    /// The RotaryEventArgs serves information for the triggered Rotary event.
+    /// RotaryEventArgs serve information for triggered rotary event.
     /// </summary>
     /// <since_tizen> preview </since_tizen>
     public class RotaryEventArgs : EventArgs
     {
         /// <summary>
-        /// IsClockwise is true when the Rotary device rotated in the clockwise direction, or false on counter clockwise.
+        /// IsClockwise is true when Rotary device rotated clockwise direction or false on counter clockwise.
         /// </summary>
         /// <since_tizen> preview </since_tizen>
         public bool IsClockwise { get; set; }
 
         /// <summary>
-        /// Timestamp of the Rotary event.
+        /// Timestamp of rotary event
         /// </summary>
         /// <since_tizen> preview </since_tizen>
         public uint Timestamp { get; set; }

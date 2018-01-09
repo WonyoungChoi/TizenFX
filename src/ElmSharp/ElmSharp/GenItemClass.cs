@@ -22,7 +22,7 @@ namespace ElmSharp
 {
     /// <summary>
     /// It represents the GenGrid or GenList item class definition field details.
-    /// It has some display styles, such as "default", "full", and "group_index".
+    /// It has some display styles, such as "default", "full" and "group_index".
     /// </summary>
     /// <since_tizen> preview </since_tizen>
     public class GenItemClass : IDisposable
@@ -59,7 +59,7 @@ namespace ElmSharp
         /// </summary>
         /// <param name="data">The item data.</param>
         /// <param name="part">The part where the data should be shown.</param>
-        /// <param name="old">The content that has been added in gengrid.</param>
+        /// <param name="old">The content has been added in gengrid.</param>
         /// <returns>Return content that should be shown.</returns>
         /// <since_tizen> preview </since_tizen>
         public delegate EvasObject GetReusableContentDelegate(object data, string part, EvasObject old);
@@ -90,7 +90,7 @@ namespace ElmSharp
         }
 
         /// <summary>
-        /// Destroys the GenItemClass object.
+        /// Destroy the GenItemClass object.
         /// </summary>
         ~GenItemClass()
         {
@@ -104,28 +104,28 @@ namespace ElmSharp
         public string ItemStyle { get { return _style; } }
 
         /// <summary>
-        /// Gets or sets the callback that defines how to display the item text.
+        /// Gets or sets the callback that defines how to display item text.
         /// If get, return <see cref="GetTextDelegate"/>.
         /// </summary>
         /// <since_tizen> preview </since_tizen>
         public GetTextDelegate GetTextHandler { get; set; }
 
         /// <summary>
-        /// Gets or sets the callback that defines how to display the item content.
+        /// Gets or sets the callback that defines how to display item content.
         /// If get, return <see cref="GetContentDelegate"/>.
         /// </summary>
         /// <since_tizen> preview </since_tizen>
         public GetContentDelegate GetContentHandler { get; set; }
 
         /// <summary>
-        /// Gets or sets the callback that defines how to delete the item text and content.
+        /// Gets or sets the callback that defines how to delete item text and content.
         /// If get, return <see cref="DeleteDelegate"/>.
         /// </summary>
         /// <since_tizen> preview </since_tizen>
         public DeleteDelegate DeleteHandler { get; set; }
 
         /// <summary>
-        /// Gets or sets the callback that defines how to reuse the item content.
+        /// Gets or sets the callback that defines how to reuse item content.
         /// If get, return <see cref="GetReusableContentDelegate"/>.
         /// </summary>
         /// <since_tizen> preview </since_tizen>
@@ -145,11 +145,11 @@ namespace ElmSharp
         }
 
         /// <summary>
-        /// Releases all the resources currently used by this instance.
+        /// Releases all resources currently used by this instance.
         /// </summary>
         /// <param name="disposing">
-        /// true if the managed resources should be disposed,
-        /// otherwise false.
+        /// true if managed resources should be disposed
+        /// otherwise, false.
         /// </param>
         /// <since_tizen> preview </since_tizen>
         protected virtual void Dispose(bool disposing)
@@ -162,7 +162,7 @@ namespace ElmSharp
         }
 
         /// <summary>
-        /// Destroys the current object.
+        /// Destroy current object
         /// </summary>
         /// <since_tizen> preview </since_tizen>
         public void Dispose()
@@ -178,7 +178,7 @@ namespace ElmSharp
         }
 
         /// <summary>
-        /// Creates a new GenList item class in a given GenList widget.
+        /// Create a new genlist item class in a given genlist widget.
         /// </summary>
         /// <returns>The new item class object.</returns>
         /// <since_tizen> preview </since_tizen>
@@ -188,7 +188,7 @@ namespace ElmSharp
         }
 
         /// <summary>
-        /// Removes an item class in a given GenList widget.
+        /// Remove an item class in a given genlist widget.
         /// </summary>
         /// <param name="unmanagedPtr">The object to be removed.</param>
         /// <since_tizen> preview </since_tizen>
@@ -244,7 +244,7 @@ namespace ElmSharp
     }
 
     /// <summary>
-    /// It represents the gengrid item class definition field details.
+    /// It represents the GenGrid item class definition field details.
     /// </summary>
     /// <since_tizen> preview </since_tizen>
     public class GenGridItemClass : GenItemClass
@@ -259,7 +259,7 @@ namespace ElmSharp
         }
 
         /// <summary>
-        /// Adds a new gengrid item class in a given GenGrid widget.
+        /// Add a new gengrid item class in a given gengrid widget.
         /// </summary>
         /// <returns>The new instance.</returns>
         /// <since_tizen> preview </since_tizen>
@@ -269,7 +269,7 @@ namespace ElmSharp
         }
 
         /// <summary>
-        /// Removes the item class in a given GenGrid widget.
+        /// Remove an item class in a given gengrid widget.
         /// </summary>
         /// <param name="unmanagedPtr">The object to be removed.</param>
         /// <since_tizen> preview </since_tizen>

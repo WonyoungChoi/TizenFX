@@ -28,20 +28,20 @@ namespace ElmSharp.Wearable
         List<MoreOptionItem> Items { get; set; }
 
         /// <summary>
-        /// Sets or gets the count of items.
+        /// Sets or gets the count of Items
         /// </summary>
         public int Count => Items.Count;
 
         /// <summary>
-        /// Sets or gets whether it is read-only.
+        /// Sets or gets whether it is read only
         /// </summary>
         public bool IsReadOnly => false;
 
         /// <summary>
-        /// Sets or gets the item with the index.
+        /// Sets or gets the item with the index
         /// </summary>
-        /// <param name="index">The position of item in items.</param>
-        /// <returns>MoreOptionItem object on the index.</returns>
+        /// <param name="index">the position of item in items</param>
+        /// <returns></returns>
         public MoreOptionItem this[int index]
         {
             get
@@ -56,9 +56,9 @@ namespace ElmSharp.Wearable
         }
 
         /// <summary>
-        /// Creates and initializes a new instance of the MoreOptionList class.
+        /// Creates and initializes a new instance of MoreOptionList class.
         /// </summary>
-        /// <param name="owner">The object of more option.</param>
+        /// <param name="owner">the object of more option</param>
         public MoreOptionList(MoreOption owner)
         {
             Owner = owner;
@@ -66,9 +66,9 @@ namespace ElmSharp.Wearable
         }
 
         /// <summary>
-        /// Appends a new item to the more option.
+        /// Append a new item to a more option.
         /// </summary>
-        /// <param name="item">The more option item.</param>
+        /// <param name="item">The more option item</param>
         public void Add(MoreOptionItem item)
         {
             item.Handle = Interop.Eext.eext_more_option_item_append(Owner);
@@ -76,9 +76,9 @@ namespace ElmSharp.Wearable
         }
 
         /// <summary>
-        /// Adds a new item to the more option at the first.
+        /// add a new item to a more option at the first.
         /// </summary>
-        /// <param name="item">The more option item.</param>
+        /// <param name="item">The more option item</param>
         public void AddFirst(MoreOptionItem item)
         {
             item.Handle = Interop.Eext.eext_more_option_item_prepend(Owner);
@@ -86,29 +86,29 @@ namespace ElmSharp.Wearable
         }
 
         /// <summary>
-        /// Adds a new item to the more option at the last.
+        /// add a new item to a more option at the last.
         /// </summary>
-        /// <param name="item">The more option item.</param>
+        /// <param name="item">The more option item</param>
         public void AddLast(MoreOptionItem item)
         {
             Add(item);
         }
 
         /// <summary>
-        /// Get the index of an item.
+        /// Get the index of item
         /// </summary>
-        /// <param name="item">The more option item.</param>
-        /// <returns>The index of an item.</returns>
+        /// <param name="item">The more option item</param>
+        /// <returns>the index of item</returns>
         public int IndexOf(MoreOptionItem item)
         {
             return Items.IndexOf(item);
         }
 
         /// <summary>
-        /// Inserts a new item into the more option, after the more option item with the index.
+        /// Insert a new item into the more option after more option item with the index.
         /// </summary>
-        /// <param name="index">The index of an item, which is inserted after.</param>
-        /// <param name="item">The more option item.</param>
+        /// <param name="index">the index of item which is insert after</param>
+        /// <param name="item">The more option item</param>
         public void Insert(int index, MoreOptionItem item)
         {
             if (Items.Count < index + 1 || index < 0)
@@ -120,7 +120,7 @@ namespace ElmSharp.Wearable
         }
 
         /// <summary>
-        /// Deletes an item, which is the given item index.
+        /// Delete an item which is the given item index
         /// </summary>
         /// <param name="index">the item index which will be deleted</param>
         public void RemoveAt(int index)
@@ -135,7 +135,7 @@ namespace ElmSharp.Wearable
         }
 
         /// <summary>
-        /// Removes all the items from a given more option list object.
+        /// Remove all items from a given more option list object.
         /// </summary>
         public void Clear()
         {
@@ -148,30 +148,30 @@ namespace ElmSharp.Wearable
         }
 
         /// <summary>
-        /// Checks the item whether it is contained.
+        /// Check the item whether is contained
         /// </summary>
-        /// <param name="item">The more option item.</param>
-        /// <returns>If contained return true, otherwise false.</returns>
+        /// <param name="item">The more option item</param>
+        /// <returns>If contain return true, otherwise false</returns>
         public bool Contains(MoreOptionItem item)
         {
             return Items.Contains(item);
         }
 
         /// <summary>
-        /// Copies the items.
+        /// Copy Items
         /// </summary>
-        /// <param name="array">The target array.</param>
-        /// <param name="arrayIndex">The index to which the item will be copied.</param>
+        /// <param name="array">the target array</param>
+        /// <param name="arrayIndex">which index the item will copy to</param>
         public void CopyTo(MoreOptionItem[] array, int arrayIndex)
         {
             Items.CopyTo(array, arrayIndex);
         }
 
         /// <summary>
-        /// Removes the item.
+        /// Remove a item
         /// </summary>
-        /// <param name="item">The item will be removed.</param>
-        /// <returns>If removed is successful return true, otherwise false.</returns>
+        /// <param name="item">the item will be removed</param>
+        /// <returns>if remove success return true, otherwise false</returns>
         public bool Remove(MoreOptionItem item)
         {
             if (Items.Contains(item))
@@ -184,7 +184,7 @@ namespace ElmSharp.Wearable
         }
 
         /// <summary>
-        /// Returns an enumerator that iterates through IEnumerator.
+        /// Return an enumerator that iterates through IEnumerator
         /// </summary>
         /// <returns></returns>
         public IEnumerator<MoreOptionItem> GetEnumerator()

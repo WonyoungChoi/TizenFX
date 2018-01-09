@@ -21,12 +21,12 @@ using Tizen.Uix.TtsEngine;
 using static Tizen.Uix.TtsEngine.Engine;
 
 /// <summary>
-/// The Partial Interop class.
+/// Partial Interop Class
 /// </summary>
 internal static partial class Interop
 {
     /// <summary>
-    /// The TtsEngine Interop class.
+    /// TtsEngine Interop Class
     /// </summary>
     internal static class TtsEngine
     {

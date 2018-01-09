@@ -19,31 +19,31 @@ using System;
 namespace Tizen.Pims.Calendar
 {
     /// <summary>
-    /// Parsing the vCalendar file callback function.
+    /// Parsing vcalendar file callback function.
     /// </summary>
-    /// <param name="record">The record.</param>
-    /// <returns>true to continue with the next iteration of the loop, otherwise false to break out of the loop.</returns>
+    /// <param name="record">The record</param>
+    /// <returns>true to continue with the next iteration of the loop, otherwise false to break out of the loop</returns>
     /// <since_tizen> 4 </since_tizen>
     public delegate bool ParseCallback(CalendarRecord record);
 
     /// <summary>
-    /// A class for parsing and composing the vCalendar.
+    /// A class for parsing and composing vCalendar.
     /// </summary>
     /// <remarks>
-    /// It's based on the vCalendar v2.0 specification.
+    /// It's based on the vCalendar v2.0 specification
     /// </remarks>
     /// <since_tizen> 4 </since_tizen>
     public static class CalendarVcalendar
     {
         /// <summary>
-        /// Retrieves a vCalendar stream from a calendar list.
+        /// Retrieves a vcalendar stream from a calendar list.
         /// </summary>
-        /// <param name="list">The calendar list.</param>
+        /// <param name="list">The calendar list</param>
         /// <returns>
         /// The composed stream.
         /// </returns>
-        /// <exception cref="ArgumentException">Thrown when one of the arguments provided to a method is not valid.</exception>
-        /// <exception cref="OutOfMemoryException">Thrown when failed due to out of memory.</exception>
+        /// <exception cref="ArgumentException">Thrown when one of the arguments provided to a method is not valid</exception>
+        /// <exception cref="OutOfMemoryException">Thrown when failed due to out of memory</exception>
         /// <since_tizen> 4 </since_tizen>
         public static string Compose(CalendarList list)
         {
@@ -58,14 +58,14 @@ namespace Tizen.Pims.Calendar
         }
 
         /// <summary>
-        /// Retrieves all the calendars from a vCalendar stream.
+        /// Retrieves all calendars from a vcalendar stream.
         /// </summary>
-        /// <param name="stream">The vCalendar stream.</param>
+        /// <param name="stream">The vcalendar stream</param>
         /// <returns>
-        /// The record list.
+        /// the record list
         /// </returns>
-        /// <exception cref="ArgumentException">Thrown when one of the arguments provided to a method is not valid.</exception>
-        /// <exception cref="OutOfMemoryException">Thrown when failed due to out of memory.</exception>
+        /// <exception cref="ArgumentException">Thrown when one of the arguments provided to a method is not valid</exception>
+        /// <exception cref="OutOfMemoryException">Thrown when failed due to out of memory</exception>
         /// <since_tizen> 4 </since_tizen>
         public static CalendarList Parse(string stream)
         {
@@ -81,13 +81,13 @@ namespace Tizen.Pims.Calendar
         }
 
         /// <summary>
-        /// Parses the vCalendar file with ForEach.
+        /// Parse vcalendar file with ForEach
         /// </summary>
-        /// <param name="path">The file path of the vCalendar stream file.</param>
-        /// <param name="callback">The callback function to invoke.</param>
-        /// <exception cref="InvalidOperationException">Thrown when the method failed due to an invalid operation.</exception>
-        /// <exception cref="ArgumentException">Thrown when one of the arguments provided to a method is not valid.</exception>
-        /// <exception cref="OutOfMemoryException">Thrown when failed due to out of memory.</exception>
+        /// <param name="path">The file path of the vCalendar stream file</param>
+        /// <param name="callback">he callback function to invoke</param>
+        /// <exception cref="InvalidOperationException">Thrown when method failed due to invalid operation</exception>
+        /// <exception cref="ArgumentException">Thrown when one of the arguments provided to a method is not valid</exception>
+        /// <exception cref="OutOfMemoryException">Thrown when failed due to out of memory</exception>
         /// <since_tizen> 4 </since_tizen>
         public static void ParseForEach(string path, ParseCallback callback)
         {

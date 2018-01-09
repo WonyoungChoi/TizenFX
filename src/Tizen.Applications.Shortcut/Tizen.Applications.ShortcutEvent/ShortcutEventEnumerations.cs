@@ -17,7 +17,7 @@
 namespace Tizen.Applications.Shortcut
 {
     /// <summary>
-    /// Enumeration for values of the shortcut response types.
+    /// Enumeration for values of shortcut response types.
     /// </summary>
     /// <since_tizen> 4 </since_tizen>
     public enum ShortcutError
@@ -38,7 +38,7 @@ namespace Tizen.Applications.Shortcut
         OutOfMemory = Tizen.Internals.Errors.ErrorCode.OutOfMemory,
 
         /// <summary>
-        /// I/O error.
+        /// I/O Error.
         /// </summary>
         IoError = Tizen.Internals.Errors.ErrorCode.IoError,
 
@@ -53,7 +53,7 @@ namespace Tizen.Applications.Shortcut
         Exist = -0x01160000 | 0x02,
 
         /// <summary>
-        /// Shortcut does not exist.
+        /// Not exist shortcut.
         /// </summary>
         NotExist = -0x01160000 | 0x08,
     }

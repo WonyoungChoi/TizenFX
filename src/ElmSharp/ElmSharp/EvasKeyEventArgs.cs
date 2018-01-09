@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 namespace ElmSharp
 {
     /// <summary>
-    /// The EvasKeyEventArgs is a EvasKey EventArgs.
+    /// The EvasKeyEventArgs is an EvasKey EventArgs
     /// </summary>
     /// <since_tizen> preview </since_tizen>
     public class EvasKeyEventArgs : EventArgs
@@ -28,25 +28,25 @@ namespace ElmSharp
         IntPtr _nativeEventInfo;
 
         /// <summary>
-        /// BackButton name in platform.
+        /// BackButton name in Platform
         /// </summary>
         /// <since_tizen> preview </since_tizen>
         public const string PlatformBackButtonName = "XF86Back";
 
         /// <summary>
-        /// MenuButton name in platform.
+        /// MenuButton name in Platform
         /// </summary>
         /// <since_tizen> preview </since_tizen>
         public const string PlatformMenuButtonName = "XF86Menu";
 
         /// <summary>
-        /// HomeButton name in platform.
+        /// HomeButton name in Platform
         /// </summary>
         /// <since_tizen> preview </since_tizen>
         public const string PlatformHomeButtonName = "XF86Home";
 
         /// <summary>
-        /// Gets the name of the key.
+        /// Gets the name of Key
         /// </summary>
         /// <since_tizen> preview </since_tizen>
         public string KeyName { get; private set; }
@@ -79,10 +79,10 @@ namespace ElmSharp
         /// <summary>
         /// Creates and initializes a new instance of the EvasKeyEventArgs class.
         /// </summary>
-        /// <param name="data">The data information.</param>
-        /// <param name="obj">The object.</param>
-        /// <param name="info">The information.</param>
-        /// <returns>EvasKey eventArgs.</returns>
+        /// <param name="data">data info</param>
+        /// <param name="obj"> object </param>
+        /// <param name="info">information </param>
+        /// <returns>EvasKey eventArgs</returns>
         /// <since_tizen> preview </since_tizen>
         static public EvasKeyEventArgs Create(IntPtr data, IntPtr obj, IntPtr info)
         {
@@ -96,44 +96,44 @@ namespace ElmSharp
         struct EvasEventKeyDown
         {
             /// <summary>
-            /// Name string of the key pressed.
+            /// Name string of the key pressed
             /// </summary>
             public string keyname;
 
             /// <summary>
-            /// Data to be passed to the event.
+            /// Data to be passed to the event
             /// </summary>
             public IntPtr data;
 
             /// <summary>
-            /// Modifier keys pressed during the event.
+            /// Modifier keys pressed during the event
             /// </summary>
             public IntPtr modifiers;
 
             /// <summary>
-            /// Locks information.
+            /// Locks info
             /// </summary>
             public IntPtr locks;
 
             /// <summary>
-            /// Logical key: (example, shift+1 == exclamation).
+            /// Logical key: (example, shift+1 == exclamation)
             /// </summary>
             public string key;
 
             /// <summary>
-            /// UTF-8 string, if this keystroke has produced a visible string to be added.
+            /// UTF8 string if this keystroke has produced a visible string to be ADDED
             /// </summary>
             public string str;
 
             /// <summary>
-            /// UTF-8 string, if this keystroke has modified a string in the middle of being composed - this string replaces the previous one.
+            /// UTF8 string if this keystroke has modified a string in the middle of being composed - this string replaces the previous one
             /// </summary>
             public string compose;
 
             public uint timestamp;
 
             /// <summary>
-            /// Event_flags.
+            /// Event_flags
             /// </summary>
             public EvasEventFlag event_flags;
 
@@ -143,26 +143,26 @@ namespace ElmSharp
             public IntPtr dev;
 
             /// <summary>
-            /// Keycode.
+            /// Keycode
             /// </summary>
             public uint keycode;
         };
     }
 
     /// <summary>
-    /// Flags for the events.
+    /// Flags for Events
     /// </summary>
     /// <since_tizen> preview </since_tizen>
     [Flags]
     public enum EvasEventFlag
     {
         /// <summary>
-        /// No fancy flags set.
+        /// No fancy flags set
         /// </summary>
         None = 0,
 
         /// <summary>
-        /// This event is being delivered but should be put "on hold" until the on hold flag is unset. The event should be used for informational purposes and maybe some indications visually, but not actually perform anything.
+        ///This event is being delivered but should be put "on hold" until the on hold flag is unset. the event should be used for informational purposes and maybe some indications visually, but not actually perform anything
         /// </summary>
         OnHold = 1,
     }

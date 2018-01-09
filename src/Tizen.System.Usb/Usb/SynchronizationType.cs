@@ -17,21 +17,21 @@
 namespace Tizen.System.Usb
 {
     /// <summary>
-    /// Enumeration for the isochronous endpoints synchronization types.
+    /// Enumeration of isochronous endpoint's synchronization type.
     /// </summary>
-    /// <since_tizen> 4 </since_tizen>
+    /// <since_tizen> 5 </since_tizen>
     public enum SynchronizationType
     {
         /// <summary>
-        /// Asynchronous.
+        /// Asynchronous
         /// </summary>
         Asynchronous = Interop.SynchronizationType.Async,
         /// <summary>
-        /// Adaptive.
+        /// Adaptive
         /// </summary>
         Adaptive = Interop.SynchronizationType.Adaptive,
         /// <summary>
-        /// Synchronous.
+        /// Synchronous
         /// </summary>
         Synchronous = Interop.SynchronizationType.Sync,
     }
