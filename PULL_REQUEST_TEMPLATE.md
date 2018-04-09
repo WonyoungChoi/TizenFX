@@ -23,4 +23,3 @@ Changed:
 ### Behavioral Changes ###
 
 Describe any non-bug related behavioral changes that may change how users app behaves when upgrading to this version of the codebase.
-
