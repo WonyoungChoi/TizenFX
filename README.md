@@ -12,6 +12,7 @@ TizenFX API, which allows you to access platform-specific features not covered b
 
 ## Branches
 
+
 | branch | API level | platform          | pre-release | stable |
 |--------|:---------:|-------------------|-------------|--------|
 |master  | 5         | Tizen vNext (5.0) | [![api5_myget](https://img.shields.io/tizen.myget/dotnet/vpre/Tizen.NET.API5.svg)](https://tizen.myget.org/feed/dotnet/package/nuget/Tizen.NET) | |
@@ -62,21 +63,4 @@ You can download the latest binaries with TizenFX from the link below :
 |-------------------|------|
 | Tizen 4.0         | http://download.tizen.org/snapshots/tizen/4.0-unified/latest/ |
 | Tizen vNext (5.0) | http://download.tizen.org/snapshots/tizen/unified/latest/ |
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
