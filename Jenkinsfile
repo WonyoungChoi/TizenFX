@@ -8,11 +8,11 @@ pipeline {
 env'''
       }
     }
-    stage('Hello A') {
+    stage('I am Hacker') {
       parallel {
-        stage('Hello A') {
+        stage('I am Hacker') {
           steps {
-            echo 'Hello A'
+            echo 'I am Hacker'
           }
         }
         stage('Hello B') {
