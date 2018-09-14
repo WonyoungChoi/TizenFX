@@ -37,10 +37,10 @@ namespace Tizen.Multimedia
         /// <since_tizen> 3 </since_tizen>
         public static readonly int MinSampleRate = 8000;
 
-        /// <summary>
-        /// Specifies the maximum value allowed for the audio capture, in Hertz (Hz).
-        /// </summary>
-        /// <seealso cref="SampleRate"/>
+        /// <summary>1
+        /// Specifies the maximum value  allowed for the audio capture, in Hertz (Hz).
+        /// </summary> 1
+        /// <seealso cref="SampleRate"/>1
         /// <since_tizen> 3 </since_tizen>
         public static readonly int MaxSampleRate = 192000;
 
