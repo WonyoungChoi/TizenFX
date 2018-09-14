@@ -23,7 +23,7 @@ using static Interop.AudioIO;
 
 namespace Tizen.Multimedia
 {
-    /// <summary>
+    /// <summary> edit
     /// Provides the ability to directly manage the system audio input devices.
     /// </summary>
     /// <privilege>http://tizen.org/privilege/recorder</privilege>
