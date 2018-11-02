@@ -7,11 +7,7 @@ pipeline {
       }
       steps {
         script {
-          if (pullRequest.base == "master") {
-            echo "This is API6!!"
-          } else if (pullRequest.base == "API5") {
-            echo "This is API5!!"
-          }
+          echo "Test !!"
         }
       }
     }
