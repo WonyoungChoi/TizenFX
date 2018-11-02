@@ -8,8 +8,22 @@ pipeline {
       steps {
         script {
           if (pullRequest.base == "master") {
-            echo "API6 !!!" 
+            pullRequest.addLabels("API6")
+          } else if (pullRequest.base == "API5") {
+            pullRequest.addLabels("API5") 
           }
+        }
+      }
+    }
+    stage ('Commit Status') {
+      when {
+        changeRequest()
+      }
+      steps {
+        script {
+          pullRequest.createStatus(status: 'success',
+                                   context: 'TizenFX/BuildChecker',
+                                   description: 'FInished!')
         }
       }
     }
