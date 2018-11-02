@@ -20,11 +20,7 @@ pipeline {
         changeRequest()
       }
       steps {
-        script {
-          pullRequest.createStatus(status: 'success',
-                                   context: 'TizenFX/BuildChecker',
-                                   description: 'FInished!')
-        }
+        echo "Commit"
       }
     }
   }
