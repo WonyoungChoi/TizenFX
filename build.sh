@@ -4,6 +4,7 @@ SCRIPT_FILE=$(readlink -f $0)
 SCRIPT_DIR=$(dirname $SCRIPT_FILE)
 
 
+
 OUTDIR=$SCRIPT_DIR/Artifacts
 
 RETRY_CMD="$SCRIPT_DIR/tools/scripts/retry.sh"
