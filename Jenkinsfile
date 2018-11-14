@@ -1,4 +1,4 @@
-node('Build-Worker') {
+node('Build_Worker') {
 
   echo 'Hello Jenkins'
 
