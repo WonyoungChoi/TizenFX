@@ -1,13 +1,19 @@
 node('Build_Worker') {
 
-  checkout scm
-  
-  sh 'ls -al'
-  
-  
+
+  stage('SCM') {
+    checkout scm
+  }
+
+  if (env.CHANGE_ID) {
+    pullRequest.addLabel('TEST_LABEL')
+  }
+
   def myTest = load('build/ci-scripts/myTest.groovy')
-  
-  echo 'Hello Jenkins'
-  myTest.sayHello()
+
+  stage('MyTest') {
+    echo 'Hello Jenkins'
+    myTest.sayHello()
+  }
 
 }
