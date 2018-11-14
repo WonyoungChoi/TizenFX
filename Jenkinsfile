@@ -1,5 +1,7 @@
 node('Build_Worker') {
 
+  checkout scm
+  
   sh 'ls -al'
   
   
