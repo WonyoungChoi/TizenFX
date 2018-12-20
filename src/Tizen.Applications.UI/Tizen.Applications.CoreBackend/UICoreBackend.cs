@@ -60,7 +60,7 @@ namespace Tizen.Applications.CoreBackend
             base.Run(args);
 
             ErrorCode err = ErrorCode.None;
-            err = Interop.Application.AddEventHandler(out _lowMemoryEventHandle, AppEventType.LowMemory, _onLowMemoryNative, IntPtr.Zero);
+            err = Interop.Application.AddEventHandler(out _lowMeoryEventHandle, AppEventType.LowMemory, _onLowMemoryNative, IntPtr.Zero);
             if (err != ErrorCode.None)
             {
                 Log.Error(LogTag, "Failed to add event handler for LowMemory event. Err = " + err);
@@ -71,7 +71,7 @@ namespace Tizen.Applications.CoreBackend
                 Log.Error(LogTag, "Failed to add event handler for LowBattery event. Err = " + err);
             }
 
-            err = Interop.Application.AddEventHandler(out _localeChangedEventHandle, AppEventType.LanguageChanged, _onLocaleChangedNative, IntPtr.Zero);
+            err = Interop.Application.AddEventHandler(out _localehangedEventHandle, AppEventType.LanguageChanged, _onLocaleChangedNative, IntPtr.Zero);
             if (err != ErrorCode.None)
             {
                 Log.Error(LogTag, "Failed to add event handler for LocaleChanged event. Err = " + err);
@@ -83,7 +83,7 @@ namespace Tizen.Applications.CoreBackend
                 Log.Error(LogTag, "Failed to add event handler for RegionFormatChanged event. Err = " + err);
             }
 
-            err = Interop.Application.AddEventHandler(out _deviceOrientationChangedEventHandle, AppEventType.DeviceOrientationChanged, _onDeviceOrientationChangedNative, IntPtr.Zero);
+            err = Interop.Application.AddEventHandler(out _devicerientationChangedEventHandle, AppEventType.DeviceOrientationChanged, _onDeviceOrientationChangedNative, IntPtr.Zero);
             if (err != ErrorCode.None)
             {
                 Log.Error(LogTag, "Failed to add event handler for DeviceOrientationChanged event. Err = " + err);
