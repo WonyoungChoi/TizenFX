@@ -1,0 +1,3 @@
+#!groovy
+
+executePipeline project: 'TizenFX'
