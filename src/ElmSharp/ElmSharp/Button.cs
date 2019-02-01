@@ -24,6 +24,8 @@ namespace ElmSharp
     /// <since_tizen> preview </since_tizen>
     public class Button : Layout
     {
+        private int _this_is_unused_variable;
+
         private SmartEvent _clicked;
         private SmartEvent _repeated;
         private SmartEvent _pressed;
