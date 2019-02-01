@@ -4,6 +4,7 @@
 [![Build Status](http://13.124.0.26:8080/buildStatus/icon?job=TizenFX/Branch_Checkers/master)](http://13.124.0.26:8080/job/TizenFX/job/Branch_Checkers/job/master/)
 
 
+
 TizenFX API, which allows you to access platform-specific features not covered by the generic .NET and Xamarin.Forms features, such as system information and status, battery status, sensor date, and account and connectivity services.
 
 ## Branches
