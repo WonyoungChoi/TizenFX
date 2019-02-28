@@ -953,26 +953,6 @@ namespace Tizen.Applications
             return isPreloadPackage;
         }
 
-        /// <summary>
-        /// Compares the certificate of the two packages.
-        /// </summary>
-        /// <param name="lhsPackageId">Package ID to compare.</param>
-        /// <param name="rhsPackageId">Package ID to be compared.</param>
-        /// <returns>Returns certificate comparison result.</returns>
-        /// <exception cref="ArgumentException">Thrown when the failed input package ID is invalid.</exception>
-        /// <exception cref="System.IO.IOException">Thrown when the method failed due to an internal I/O error.</exception>
-        /// <since_tizen> 3 </since_tizen>
-        public static CertCompareResultType CompareCertInfo(string lhsPackageId, string rhsPackageId)
-        {
-            Interop.PackageManager.CertCompareResultType compareResult;
-            Interop.PackageManager.ErrorCode err = Interop.PackageManager.PackageManagerCompareCertInfo(lhsPackageId, rhsPackageId, out compareResult);
-            if (err != Interop.PackageManager.ErrorCode.None)
-            {
-                throw PackageManagerErrorFactory.GetException(err, "Failed to compare cert info");
-            }
-
-            return (CertCompareResultType)compareResult;
-        }
 
         /// <summary>
         /// Compares the certificate of the two packages which contain each given application ID.

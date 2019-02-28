@@ -108,10 +108,15 @@ namespace Tizen.Applications
         /// Overrides this method if you want to handle the behavior when the application is paused.
         /// If base.OnPause() is not called, the event 'Paused' will not be emitted.
         /// </summary>
-        /// <since_tizen> 3 </since_tizen>
+        /// <since_tizen> 4 </since_tizen>
         protected virtual void OnPause()
         {
             Paused?.Invoke(this, EventArgs.Empty);
+        }
+
+        public int MethodAddTest1(int a, int b)
+        {
+            return a + b;
         }
     }
 }

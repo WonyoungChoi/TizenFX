@@ -195,7 +195,6 @@ namespace Tizen.Applications
         /// Gets the package size information.
         /// </summary>
         /// <returns>Package size information.</returns>
-        /// <privilege>http://tizen.org/privilege/packagemanager.info</privilege>
         /// <since_tizen> 3 </since_tizen>
         public async Task<PackageSizeInformation> GetSizeInformationAsync()
         {
