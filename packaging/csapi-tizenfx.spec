@@ -28,7 +28,10 @@ ExcludeArch: aarch64
 AutoReqProv: no
 
 BuildRequires: dotnet-build-tools
+BuildRequires: coreclr-devel
 Requires(post): /usr/bin/vconftool
+
+BuildRequires: make
 
 %description
 %{summary}
@@ -131,10 +134,14 @@ cp %{SOURCE1} .
 rm -fr %{_tizenfx_bin_path}
 export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=true
 
+# Full build TizenFX
 %define build_cmd ./tools/scripts/retry.sh ./tools/scripts/timeout.sh -t 600 ./build.sh
 %{build_cmd} --full
 %{build_cmd} --pack %{TIZEN_NET_NUGET_VERSION}
 
+./build.sh validate
+
+# Generate filelist for rpm packaging
 GetFileList() {
   PROFILE=$1
   cat packaging/PlatformFileList.txt | grep -v "\.preload" | grep -E "#$PROFILE[[:space:]]|#$PROFILE$" | cut -d# -f1 | sed "s#^#%{DOTNET_ASSEMBLY_PATH}/#"

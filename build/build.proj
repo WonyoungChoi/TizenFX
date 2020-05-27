@@ -119,7 +119,7 @@
   <Target Name="Dummy">
 
     <PropertyGroup>
-      <APIToolPath>$(MSBuildThisFileDirectory)..\tools\bin\APITool.dll</APIToolPath>
+      <APIToolPath>$(MSBuildThisFileDirectory)..\tools\bin\APITool\APITool.dll</APIToolPath>
     </PropertyGroup>
 
     <MakeDir Directories="$(OutputDummyDir)" />

@@ -17,6 +17,8 @@
 using System;
 using System.Runtime.InteropServices;
 
+using Tizen.Internals;
+
 namespace ElmSharp
 {
     /// <summary>
@@ -92,6 +94,7 @@ namespace ElmSharp
         /// <summary>
         /// Event structure for Key Down event callbacks.
         /// </summary>
+        [NativeStruct]
         [StructLayout(LayoutKind.Sequential)]
         struct EvasEventKeyDown
         {

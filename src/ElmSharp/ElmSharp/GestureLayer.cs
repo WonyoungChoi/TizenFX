@@ -18,6 +18,8 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 
+using Tizen.Internals;
+
 namespace ElmSharp
 {
     /// <summary>
@@ -601,6 +603,7 @@ namespace ElmSharp
         /// The struct of TapData.
         /// </summary>
         /// <since_tizen> preview </since_tizen>
+        [NativeStruct]
         [StructLayout(LayoutKind.Sequential)]
         public struct TapData
         {
@@ -637,6 +640,7 @@ namespace ElmSharp
         /// The struct of MomentumData.
         /// </summary>
         /// <since_tizen> preview </since_tizen>
+        [NativeStruct]
         [StructLayout(LayoutKind.Sequential)]
         public struct MomentumData
         {
@@ -703,6 +707,7 @@ namespace ElmSharp
         /// The struct of LineData.
         /// </summary>
         /// <since_tizen> preview </since_tizen>
+        [NativeStruct]
         [StructLayout(LayoutKind.Sequential)]
         public struct LineData
         {
@@ -775,6 +780,7 @@ namespace ElmSharp
         /// The struct of ZoomData.
         /// </summary>
         /// <since_tizen> preview </since_tizen>
+        [NativeStruct]
         [StructLayout(LayoutKind.Sequential)]
         public struct ZoomData
         {
@@ -812,6 +818,7 @@ namespace ElmSharp
         /// The struct of RotateData.
         /// </summary>
         /// <since_tizen> preview </since_tizen>
+        [NativeStruct]
         [StructLayout(LayoutKind.Sequential)]
         public struct RotateData
         {

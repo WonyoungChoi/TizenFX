@@ -3,12 +3,16 @@
 SCRIPT_FILE=$(readlink -f $0)
 SCRIPT_DIR=$(dirname $SCRIPT_FILE)
 
-GITDIR="$SCRIPT_DIR"/.APITool
-BINDIR="$SCRIPT_DIR"/bin
+# APITool
+APITOOL_GITDIR="$SCRIPT_DIR"/.APITool
+APITOOL_BINDIR="$SCRIPT_DIR"/bin/APITool
 
-rm -fr $GITDIR
-git clone https://github.com/TizenAPI/APITool $GITDIR
+rm -fr $APITOOL_GITDIR
+git clone https://github.com/TizenAPI/APITool $APITOOL_GITDIR
+dotnet publish $APITOOL_GITDIR -o $APITOOL_BINDIR
 
-dotnet publish $GITDIR -o $BINDIR
+rm -fr $APITOOL_GITDIR
 
-rm -fr $GITDIR
+# StructValidator
+dotnet publish "$SCRIPT_DIR"/StructValidator -o bin/StructValidator
+

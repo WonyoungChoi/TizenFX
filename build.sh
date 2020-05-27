@@ -107,6 +107,16 @@ cmd_install() {
   sdb $SDB_OPTIONS shell chsmack -a '_' $TARGET_ASSEMBLY_PATH/*
 }
 
+cmd_validate() {
+  if [ ! -d $OUTDIR/bin/public ]; then
+    echo "Target assemblies are not found. Build first."
+    exit 1
+  fi
+  DATAFILE=$OUTDIR/native-size.dat
+  make -f $SCRIPT_DIR/tools/NativeSizeInfo/Makefile DATAFILE=$DATAFILE
+  dotnet $SCRIPT_DIR/tools/bin/StructValidator/StructValidator.dll -i $DATAFILE $OUTDIR/bin/public
+}
+
 cmd_clean() {
   $RUN_BUILD /t:clean
 }
@@ -120,5 +130,6 @@ case "$cmd" in
   pack |--pack |-p) cmd_pack $@ ;;
   install |--install |-i) cmd_install $@ ;;
   clean|--clean|-c) cmd_clean $@ ;;
+  validate) cmd_validate $@ ;;
   *) usage ;;
 esac

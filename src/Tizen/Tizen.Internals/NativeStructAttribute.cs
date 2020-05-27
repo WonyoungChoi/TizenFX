@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2020 Samsung Electronics Co., Ltd All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the License);
  * you may not use this file except in compliance with the License.
@@ -15,24 +15,19 @@
  */
 
 using System;
-using System.Runtime.InteropServices;
+using System.ComponentModel;
 
-using Tizen.Internals;
-
-internal static partial class Interop
+namespace Tizen.Internals
 {
-    internal static partial class Eina
+    /// <summary>
+    /// Indicates that the attributed struct maps an unmanaged struct.
+    /// </summary>
+    /// <remarks>
+    /// The <see cref="NativeStructAttribute"/> attribute provides the information needed to verify that tue struct is correctly mapped. 
+    /// </remarks>
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [AttributeUsage(AttributeTargets.Struct, AllowMultiple = true)]
+    public class NativeStructAttribute : Attribute
     {
-        [NativeStruct]
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct Size2D
-        {
-            public int w;
-            public int h;
-        };
-
-        [DllImport(Libraries.Eina)]
-        [return: MarshalAs(UnmanagedType.U1)]
-        internal static extern bool eina_main_loop_is();
     }
 }
