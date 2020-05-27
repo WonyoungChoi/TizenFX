@@ -17,6 +17,8 @@
 using System;
 using System.Runtime.InteropServices;
 
+using Tizen.Internals;
+
 namespace ElmSharp
 {
     /// <summary>

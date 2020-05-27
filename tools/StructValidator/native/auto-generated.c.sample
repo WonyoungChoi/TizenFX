@@ -1,0 +1,7 @@
+#include "common.h"
+
+// Auto generated header includes
+#include <time.h>
+
+// Auto generated checker functions
+CHECK_STRUCT("Interop/Libc/SystemTime", 48, struct tm)

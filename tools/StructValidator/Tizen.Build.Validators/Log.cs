@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Samsung Electronics Co., Ltd All Rights Reserved
+ * Copyright (c) 2020 Samsung Electronics Co., Ltd All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the License);
  * you may not use this file except in compliance with the License.
@@ -15,24 +15,25 @@
  */
 
 using System;
-using System.Runtime.InteropServices;
 
-using Tizen.Internals;
-
-internal static partial class Interop
+namespace Tizen.Build.Validators
 {
-    internal static partial class Eina
+    internal static class Log
     {
-        [NativeStruct("Eina_Size2D", Include="Elementary.h", PkgConfig="elementary")]
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct Size2D
-        {
-            public int w;
-            public int h;
+        public static bool IsVerbose { get; set; }
+
+        public static void Verbose(string message) {
+            if (IsVerbose) {
+                Console.WriteLine(message);
+            }
         }
 
-        [DllImport(Libraries.Eina)]
-        [return: MarshalAs(UnmanagedType.U1)]
-        internal static extern bool eina_main_loop_is();
+        public static void Info(string message) {
+            Console.WriteLine(message);
+        }
+
+        public static void Error(string message) {
+            Console.Error.WriteLine(message);
+        }
     }
 }

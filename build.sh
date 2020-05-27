@@ -70,6 +70,15 @@ cmd_pack() {
   $RUN_BUILD /t:pack /p:Version=$VERSION
 }
 
+# this command should be used in GBS environment
+cmd_validate() {
+  if [ ! -d $OUTDIR/bin/public ]; then
+    echo "Target assemblies are not found. Build first."
+    exit 1
+  fi
+  $RUN_BUILD /t:ValidateStruct
+}
+
 cmd_install() {
   DEVICE_ID=$1
 
@@ -120,5 +129,6 @@ case "$cmd" in
   pack |--pack |-p) cmd_pack $@ ;;
   install |--install |-i) cmd_install $@ ;;
   clean|--clean|-c) cmd_clean $@ ;;
+  validate) cmd_validate $@ ;;
   *) usage ;;
 esac

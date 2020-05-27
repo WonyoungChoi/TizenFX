@@ -119,12 +119,25 @@
   <Target Name="Dummy">
 
     <PropertyGroup>
-      <APIToolPath>$(MSBuildThisFileDirectory)..\tools\bin\APITool.dll</APIToolPath>
+      <APIToolPath>$(MSBuildThisFileDirectory)..\tools\bin\APITool\APITool.dll</APIToolPath>
     </PropertyGroup>
 
     <MakeDir Directories="$(OutputDummyDir)" />
     <Exec Command="dotnet $([System.IO.Path]::GetFullPath('$(APIToolPath)')) dummy $(OutputPublicDir)ref $(OutputDummyDir) " />
 
+  </Target>
+
+  <!--
+    Target : ValidateStruct
+    ==============
+    Test validation size of structs
+  -->
+  <Target Name="ValidateStruct">
+    <PropertyGroup>
+      <SVToolPath>$(MSBuildThisFileDirectory)..\tools\bin\StructValidator\StructValidator.dll</SVToolPath>
+    </PropertyGroup>
+
+    <Exec Command="dotnet $([System.IO.Path]::GetFullPath('$(SVToolPath)')) $(OutputPublicDir) " />
   </Target>
 
 </Project>

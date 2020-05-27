@@ -1,14 +1,15 @@
 {
   "runtimeTarget": {
-    "name": ".NETCoreApp,Version=v2.0",
-    "signature": "4287eed50f7e2ce2cafcee6c6b1b9b0b7eef1f43"
+    "name": ".NETCoreApp,Version=v3.0",
+    "signature": ""
   },
   "compilationOptions": {},
   "targets": {
-    ".NETCoreApp,Version=v2.0": {
+    ".NETCoreApp,Version=v3.0": {
       "APITool/1.0.0": {
         "dependencies": {
           "CommandLineParser": "2.4.3",
+          "Microsoft.CodeAnalysis.FxCopAnalyzers": "2.6.3",
           "Mono.Cecil": "0.10.3"
         },
         "runtime": {
@@ -23,7 +24,19 @@
           }
         }
       },
+      "Microsoft.CodeAnalysis.FxCopAnalyzers/2.6.3": {
+        "dependencies": {
+          "Microsoft.CodeQuality.Analyzers": "2.6.3",
+          "Microsoft.NetCore.Analyzers": "2.6.3",
+          "Microsoft.NetFramework.Analyzers": "2.6.3",
+          "Text.Analyzers": "2.6.3"
+        }
+      },
+      "Microsoft.CodeQuality.Analyzers/2.6.3": {},
+      "Microsoft.NetCore.Analyzers/2.6.3": {},
+      "Microsoft.NETCore.Platforms/1.0.1": {},
       "Microsoft.NETCore.Targets/1.0.1": {},
+      "Microsoft.NetFramework.Analyzers/2.6.3": {},
       "Mono.Cecil/0.10.3": {
         "dependencies": {
           "System.Collections": "4.0.11",
@@ -56,11 +69,13 @@
       },
       "runtime.native.System.Security.Cryptography/4.0.0": {
         "dependencies": {
+          "Microsoft.NETCore.Platforms": "1.0.1",
           "Microsoft.NETCore.Targets": "1.0.1"
         }
       },
       "System.Collections/4.0.11": {
         "dependencies": {
+          "Microsoft.NETCore.Platforms": "1.0.1",
           "Microsoft.NETCore.Targets": "1.0.1",
           "System.Runtime": "4.1.0"
         }
@@ -81,24 +96,28 @@
       },
       "System.Diagnostics.Debug/4.0.11": {
         "dependencies": {
+          "Microsoft.NETCore.Platforms": "1.0.1",
           "Microsoft.NETCore.Targets": "1.0.1",
           "System.Runtime": "4.1.0"
         }
       },
       "System.Diagnostics.Tracing/4.1.0": {
         "dependencies": {
+          "Microsoft.NETCore.Platforms": "1.0.1",
           "Microsoft.NETCore.Targets": "1.0.1",
           "System.Runtime": "4.1.0"
         }
       },
       "System.Globalization/4.0.11": {
         "dependencies": {
+          "Microsoft.NETCore.Platforms": "1.0.1",
           "Microsoft.NETCore.Targets": "1.0.1",
           "System.Runtime": "4.1.0"
         }
       },
       "System.IO/4.1.0": {
         "dependencies": {
+          "Microsoft.NETCore.Platforms": "1.0.1",
           "Microsoft.NETCore.Targets": "1.0.1",
           "System.Runtime": "4.1.0",
           "System.Text.Encoding": "4.0.11",
@@ -107,6 +126,7 @@
       },
       "System.IO.FileSystem/4.0.1": {
         "dependencies": {
+          "Microsoft.NETCore.Platforms": "1.0.1",
           "Microsoft.NETCore.Targets": "1.0.1",
           "System.IO": "4.1.0",
           "System.IO.FileSystem.Primitives": "4.0.1",
@@ -132,6 +152,7 @@
       },
       "System.Reflection/4.1.0": {
         "dependencies": {
+          "Microsoft.NETCore.Platforms": "1.0.1",
           "Microsoft.NETCore.Targets": "1.0.1",
           "System.IO": "4.1.0",
           "System.Reflection.Primitives": "4.0.1",
@@ -140,12 +161,14 @@
       },
       "System.Reflection.Primitives/4.0.1": {
         "dependencies": {
+          "Microsoft.NETCore.Platforms": "1.0.1",
           "Microsoft.NETCore.Targets": "1.0.1",
           "System.Runtime": "4.1.0"
         }
       },
       "System.Resources.ResourceManager/4.0.1": {
         "dependencies": {
+          "Microsoft.NETCore.Platforms": "1.0.1",
           "Microsoft.NETCore.Targets": "1.0.1",
           "System.Globalization": "4.0.11",
           "System.Reflection": "4.1.0",
@@ -154,23 +177,27 @@
       },
       "System.Runtime/4.1.0": {
         "dependencies": {
+          "Microsoft.NETCore.Platforms": "1.0.1",
           "Microsoft.NETCore.Targets": "1.0.1"
         }
       },
       "System.Runtime.Extensions/4.1.0": {
         "dependencies": {
+          "Microsoft.NETCore.Platforms": "1.0.1",
           "Microsoft.NETCore.Targets": "1.0.1",
           "System.Runtime": "4.1.0"
         }
       },
       "System.Runtime.Handles/4.0.1": {
         "dependencies": {
+          "Microsoft.NETCore.Platforms": "1.0.1",
           "Microsoft.NETCore.Targets": "1.0.1",
           "System.Runtime": "4.1.0"
         }
       },
       "System.Runtime.InteropServices/4.1.0": {
         "dependencies": {
+          "Microsoft.NETCore.Platforms": "1.0.1",
           "Microsoft.NETCore.Targets": "1.0.1",
           "System.Reflection": "4.1.0",
           "System.Reflection.Primitives": "4.0.1",
@@ -188,6 +215,7 @@
       },
       "System.Security.Cryptography.Algorithms/4.2.0": {
         "dependencies": {
+          "Microsoft.NETCore.Platforms": "1.0.1",
           "System.Collections": "4.0.11",
           "System.IO": "4.1.0",
           "System.Resources.ResourceManager": "4.0.1",
@@ -200,20 +228,11 @@
           "System.Security.Cryptography.Primitives": "4.0.0",
           "System.Text.Encoding": "4.0.11",
           "runtime.native.System.Security.Cryptography": "4.0.0"
-        },
-        "runtimeTargets": {
-          "runtime/unix/lib/_._": {
-            "rid": "unix",
-            "assetType": "runtime"
-          },
-          "runtime/win/lib/_._": {
-            "rid": "win",
-            "assetType": "runtime"
-          }
         }
       },
       "System.Security.Cryptography.Csp/4.0.0": {
         "dependencies": {
+          "Microsoft.NETCore.Platforms": "1.0.1",
           "System.IO": "4.1.0",
           "System.Reflection": "4.1.0",
           "System.Resources.ResourceManager": "4.0.1",
@@ -226,20 +245,11 @@
           "System.Security.Cryptography.Primitives": "4.0.0",
           "System.Text.Encoding": "4.0.11",
           "System.Threading": "4.0.11"
-        },
-        "runtimeTargets": {
-          "runtime/unix/lib/_._": {
-            "rid": "unix",
-            "assetType": "runtime"
-          },
-          "runtime/win/lib/_._": {
-            "rid": "win",
-            "assetType": "runtime"
-          }
         }
       },
       "System.Security.Cryptography.Encoding/4.0.0": {
         "dependencies": {
+          "Microsoft.NETCore.Platforms": "1.0.1",
           "System.Collections": "4.0.11",
           "System.Collections.Concurrent": "4.0.12",
           "System.Linq": "4.1.0",
@@ -251,16 +261,6 @@
           "System.Security.Cryptography.Primitives": "4.0.0",
           "System.Text.Encoding": "4.0.11",
           "runtime.native.System.Security.Cryptography": "4.0.0"
-        },
-        "runtimeTargets": {
-          "runtime/unix/lib/_._": {
-            "rid": "unix",
-            "assetType": "runtime"
-          },
-          "runtime/win/lib/_._": {
-            "rid": "win",
-            "assetType": "runtime"
-          }
         }
       },
       "System.Security.Cryptography.Primitives/4.0.0": {
@@ -276,6 +276,7 @@
       },
       "System.Text.Encoding/4.0.11": {
         "dependencies": {
+          "Microsoft.NETCore.Platforms": "1.0.1",
           "Microsoft.NETCore.Targets": "1.0.1",
           "System.Runtime": "4.1.0"
         }
@@ -288,10 +289,12 @@
       },
       "System.Threading.Tasks/4.0.11": {
         "dependencies": {
+          "Microsoft.NETCore.Platforms": "1.0.1",
           "Microsoft.NETCore.Targets": "1.0.1",
           "System.Runtime": "4.1.0"
         }
-      }
+      },
+      "Text.Analyzers/2.6.3": {}
     }
   },
   "libraries": {
@@ -303,9 +306,37 @@
     "CommandLineParser/2.4.3": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-3/WpSCsHNo4aTSaNW9SnmSqRNDgR4meKVJn5anKZn/hR/lGnDp8HbDMu1/w2GXOXi2rAhREU1cNwQMtEtlR1mg==",
+      "sha512": "sha512-U2FC9Y8NyIxxU6MpFFdWWu1xwiqz/61v/Doou7kmVjpeIEMLWyiNNkzNlSE84kyJ0O1LKApuEj5z48Ow0Hi4OQ==",
       "path": "commandlineparser/2.4.3",
       "hashPath": "commandlineparser.2.4.3.nupkg.sha512"
+    },
+    "Microsoft.CodeAnalysis.FxCopAnalyzers/2.6.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-E/kXJSnsacm1KIN+6sj9R5/gH6XpOvghxWNCS0SQP5xCXfCwz2EHFLp+27GTHyBLYisEm8XLLcex2dD2Zf89wA==",
+      "path": "microsoft.codeanalysis.fxcopanalyzers/2.6.3",
+      "hashPath": "microsoft.codeanalysis.fxcopanalyzers.2.6.3.nupkg.sha512"
+    },
+    "Microsoft.CodeQuality.Analyzers/2.6.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-U/MAQFehzMrN59yaSb9fEq/7itgwoG4NrQXy7EL61Ln7KV/qOJ8VZh4ts+d3N3w6HH2RDQ4xVjhycgqYm+Gj0A==",
+      "path": "microsoft.codequality.analyzers/2.6.3",
+      "hashPath": "microsoft.codequality.analyzers.2.6.3.nupkg.sha512"
+    },
+    "Microsoft.NetCore.Analyzers/2.6.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-L0Fy52hZn6Rd0C6ZSgBcNRoIc4KSbwYQSF/Hs3ILl0Vf1ZsCZq1slU3Sxo3bACE+aIKvWpyJkyIOQRO6PH1mRw==",
+      "path": "microsoft.netcore.analyzers/2.6.3",
+      "hashPath": "microsoft.netcore.analyzers.2.6.3.nupkg.sha512"
+    },
+    "Microsoft.NETCore.Platforms/1.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-2G6OjjJzwBfNOO8myRV/nFrbTw5iA+DEm0N+qUqhrOmaVtn4pC77h38I1jsXGw5VH55+dPfQsqHD0We9sCl9FQ==",
+      "path": "microsoft.netcore.platforms/1.0.1",
+      "hashPath": "microsoft.netcore.platforms.1.0.1.nupkg.sha512"
     },
     "Microsoft.NETCore.Targets/1.0.1": {
       "type": "package",
@@ -314,10 +345,17 @@
       "path": "microsoft.netcore.targets/1.0.1",
       "hashPath": "microsoft.netcore.targets.1.0.1.nupkg.sha512"
     },
+    "Microsoft.NetFramework.Analyzers/2.6.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-K+QctdrsnYl2f56e4UfQ9/Pp8ZfqYIngDTPfNSFaNLY7P+awkRJqUBov+tfeI3krzFMQ4TfWAsPM3YPUQS/HLw==",
+      "path": "microsoft.netframework.analyzers/2.6.3",
+      "hashPath": "microsoft.netframework.analyzers.2.6.3.nupkg.sha512"
+    },
     "Mono.Cecil/0.10.3": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-RM04CLohPMOqmLjQFeqcNaWy4GVR/JyvaqjiUoFWWIcvVDX3KJ2oS+wfxyiDN0YvdAJD9GbAKF9Ms4nLhYzWkg==",
+      "sha512": "sha512-sE0q+bj5YC3X9FuFCXv0R0suoldVGXiuUls8mtXuBwDw1LeQ39pOKFyrDiEkoxCh4tNHH/luNB6DgZZnMZlEeA==",
       "path": "mono.cecil/0.10.3",
       "hashPath": "mono.cecil.0.10.3.nupkg.sha512"
     },
@@ -495,6 +533,13 @@
       "sha512": "sha512-k1S4Gc6IGwtHGT8188RSeGaX86Qw/wnrgNLshJvsdNUOPP9etMmo8S07c+UlOAx4K/xLuN9ivA1bD0LVurtIxQ==",
       "path": "system.threading.tasks/4.0.11",
       "hashPath": "system.threading.tasks.4.0.11.nupkg.sha512"
+    },
+    "Text.Analyzers/2.6.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-6XuOLRMw2oBb1umBBXert8g2XBxeZiA4gVAK0UuytnJ9f7e6ZXkgop7JL52vCrx/qWAtxaeUiJBvx3cWaAC3mg==",
+      "path": "text.analyzers/2.6.3",
+      "hashPath": "text.analyzers.2.6.3.nupkg.sha512"
     }
   }
 }

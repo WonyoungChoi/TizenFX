@@ -1,0 +1,4 @@
+*.o
+auto-generated.c
+auto-generated.mk
+structcheck
