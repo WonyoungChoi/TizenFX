@@ -1257,7 +1257,7 @@ namespace ElmSharp
         /// Creates an auxiliary hint of the window.
         /// </summary>
         /// <remarks>
-        /// Support for this depends on the underlying windowing system. 
+        /// Support for this depends on the underlying windowing system.
         /// </remarks>
         /// <param name="hint">The auxiliary hint string</param>
         /// <param name="value">The value string</param>
@@ -1273,7 +1273,7 @@ namespace ElmSharp
         /// Deletes an auxiliary hint of the window.
         /// </summary>
         /// <remarks>
-        /// Support for this depends on the underlying windowing system. 
+        /// Support for this depends on the underlying windowing system.
         /// </remarks>
         /// <param name="id">The ID of the auxiliary hint</param>
         /// <returns>If true deletes successful, otherwise false.</returns>
@@ -1288,7 +1288,7 @@ namespace ElmSharp
         /// Changes a value of the auxiliary hint.
         /// </summary>
         /// <remarks>
-        /// Support for this depends on the underlying windowing system. 
+        /// Support for this depends on the underlying windowing system.
         /// </remarks>
         /// <param name="id">The auxiliary hint ID</param>
         /// <param name="value">The value string to be set</param>
@@ -1304,7 +1304,7 @@ namespace ElmSharp
         /// Gets a value of the auxiliary hint.
         /// </summary>
         /// <remarks>
-        /// Support for this depends on the underlying windowing system. 
+        /// Support for this depends on the underlying windowing system.
         /// </remarks>
         /// <param name="id">The auxiliary hint ID</param>
         /// <returns>The string value of the auxiliary hint ID</returns>
@@ -1319,7 +1319,7 @@ namespace ElmSharp
         /// Gets an ID of the auxiliary hint string.
         /// </summary>
         /// <remarks>
-        /// Support for this depends on the underlying windowing system. 
+        /// Support for this depends on the underlying windowing system.
         /// </remarks>
         /// <param name="hint">The auxiliary hint string</param>
         /// <returns>The ID of the auxiliary hint, otherwise -1 on failure</returns>

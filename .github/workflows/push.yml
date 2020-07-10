@@ -1,0 +1,48 @@
+name: Push
+
+on:
+  push:
+    branches:
+    - master
+    - API*
+
+env:
+  LATEST_LEVEL: API8
+
+jobs:
+  check-api-level:
+    runs-on: ubuntu-latest
+    outputs:
+      level: ${{ steps.get-level.outputs.level }}
+    steps:
+    - name: Get API Level
+      id: get-level
+      run: |
+        getLevel() {
+          if [[ $GITHUB_REF == master ]]; then
+            echo $LATEST_LEVEL
+          elif [[ $GITHUB_REF =~ ^API[0-9]+$ ]]; then
+             echo $GITHUB_REF
+          fi
+        }
+        echo GITHUB_REF=$(GITHUB_REF)
+        echo API_LEVEL=$(getLevel)
+        echo "::set-output name=level::$(getLevel)"
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.x
+
+    - name: Build
+      run: ./build.sh full
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: Artifacts
+        path: Artifacts/**
