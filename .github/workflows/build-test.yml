@@ -17,10 +17,18 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.101
+    - uses: lots0logs/gh-action-get-changed-files@2.1.4
+      id: getChangedFiles
+      with:
+        token: GITHUB_TOKEN
     
     - name: Build (Pull Request)
       if: ${{ github.event_name == 'pull_request' }}
-      run: ./build.sh full /p:BuildWithAnalyzer=True
+      uses: WonyoungChoi/problem-filter-action@1.0
+      with:
+        shell: ./build.sh full /p:BuildWithAnalyzer=True
+        type: dotnet
+        files: ${{ steps.getChangedFiles.outputs.all }}
     
     - name: Build (Push)
       if: ${{ github.event_name == 'push' }}
