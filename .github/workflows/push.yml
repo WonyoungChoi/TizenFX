@@ -19,14 +19,12 @@ jobs:
       id: get-level
       run: |
         getLevel() {
-          if [[ $GITHUB_REF == master ]]; then
+          if [[ $GITHUB_REF == refs/heads/master ]]; then
             echo $LATEST_LEVEL
-          elif [[ $GITHUB_REF =~ ^API[0-9]+$ ]]; then
-             echo $GITHUB_REF
+          elif [[ $GITHUB_REF =~ ^refs/heads/(API[0-9]+)$ ]]; then
+             echo ${BASH_REMATCH[1]}
           fi
         }
-        echo GITHUB_REF=$(GITHUB_REF)
-        echo API_LEVEL=$(getLevel)
         echo "::set-output name=level::$(getLevel)"
 
   build:
@@ -46,3 +44,37 @@ jobs:
       with:
         name: Artifacts
         path: Artifacts/**
+
+  update-api-db:
+    needs: [check-api-level, build]
+    runs-on: ubuntu-latest
+    if: ${{ needs.check-api-level.outputs.level }}
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        repository: TizenAPI/APITool
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.x
+
+    - uses: actions/download-artifact@v2
+      with:
+        name: Artifacts
+        path: Artifacts
+
+    - name: Extract API
+      run: |
+        dotnet run print --format=json --include-hidden -o api.json Artifacts/bin/public/
+
+    # - name: Update APIDB
+    #   uses: TizenAPI/tizenfx-build-actions/apidb@master
+    #   env:
+    #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    #   with:
+    #     token: ${{ secrets.GITHUB_TOKEN }}
+    #     operation: update
+    #     category: ${{ needs.check-api-level.outputs.level }}
+    #     path: api.json
