@@ -6,6 +6,12 @@ on:
     - master
     - API*
 
+    paths:
+    - 'build/**'
+    - 'internals/**'
+    - 'src/**'
+    - 'tools/**'
+
 env:
   LATEST_LEVEL: API8
 

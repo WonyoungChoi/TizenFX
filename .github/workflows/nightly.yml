@@ -1,0 +1,12 @@
+name: Nightly
+
+on:
+  schedule:
+    - cron: '0 15 * * *'
+
+jobs:
+  API8:
+    runs-on: ubuntu-latest
+    steps:
+      - name: trigger-release
+        run: echo "TBD"

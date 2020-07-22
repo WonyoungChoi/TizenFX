@@ -3,16 +3,143 @@ name: Release
 on:
   workflow_dispatch:
     inputs:
-      submitTag:
-        description: 'Submit Tag'
+      target:
+        description: 'Branch To Release'
+        required: true
+        default: 'master'
+
+env:
+  LATEST_LEVEL: API8
+
+  VERSION_PREFIX_API8: 8.0.0
+  VERSION_PREFIX_API7: 7.0.0
+  VERSION_PREFIX_API6: 6.0.0
+  VERSION_PREFIX_API5: 5.0.0
+  VERSION_PREFIX_API4: 4.0.1
+
+  GERRIT_BRANCH_API8: tizen
+  GERRIT_BRANCH_API7: tizen_5.5
+  GERRIT_BRANCH_API6: tizen_5.5_tv
+  GERRIT_BRANCH_API5: tizen_5.0
+  GERRIT_BRANCH_API4: tizen_4.0
 
 jobs:
-
   release:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v2
+      with:
+        ref: ${{ github.event.inputs.target }}
+        fetch-depth: 0
 
-    - name: Build
+    - name: Get API Level
+      id: get-level
+      env:
+        TARGET_BRANCH: ${{ github.event.inputs.target }}
       run: |
-        echo GITHUB_REF=$GITHUB_REF
-        echo SRTAG=${{ github.event.inputs.submitTag }}
+        getLevel() {
+          if [[ $TARGET_BRANCH == master ]]; then
+            echo $LATEST_LEVEL
+          elif [[ $TARGET_BRANCH =~ ^(API[0-9]+)$ ]]; then
+            echo ${BASH_REMATCH[1]}
+          fi
+        }
+        LEVEL=$(getLevel)
+        if [ -z "$LEVEL" ]; then
+          echo "::error::failed to get API level."
+          exit 1
+        fi
+        echo "::set-output name=level::$LEVEL"
+
+    - name: Get Version
+      id: get-version
+      env:
+        API_LEVEL: ${{ steps.get-level.outputs.level }}
+      run: |
+        VERSION_PREFIX_VAR=VERSION_PREFIX_$API_LEVEL
+        VERSION_PREFIX=${!VERSION_PREFIX_VAR}
+        VERSION=$VERSION_PREFIX.$((10000+$(git rev-list --count HEAD)))
+        echo VERSION=$VERSION
+        echo "::set-output name=version::$VERSION"
+
+    - name: Get Branch To Sync
+      id: get-gerrit-branch
+      env:
+        API_LEVEL: ${{ steps.get-level.outputs.level }}
+      run: |
+        GERRIT_BRANCH_VAR=GERRIT_BRANCH_$API_LEVEL
+        GERRIT_BRANCH=${!GERRIT_BRANCH_VAR}
+        echo GERRIT_BRANCH=$GERRIT_BRANCH
+        echo "::set-output name=branch::$GERRIT_BRANCH"
+
+    - name: Check Git Tag
+      env:
+        VERSION: ${{ steps.get-version.outputs.version }}
+      run: |
+        if [ $(git tag -l "$VERSION") ]; then
+          echo "Version $VERSION has already been released."
+          exit 0
+        fi
+
+    - name: Setup SSH Private Keys
+      uses: webfactory/ssh-agent@v0.4.0
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.x
+
+    # - name: Build
+    #   run: ./build.sh full
+
+    # - name: Pack
+    #   env:
+    #     VERSION: ${{ steps.get-version.outputs.version }}
+    #   run: ./build.sh pack $VERSION
+
+    # - name: Publish NuGets
+    #   env:
+    #     NUGET_SOURCE: https://tizen.myget.org/F/dotnet-test/api/v2/package
+    #     APIKEY: ${{ secrets.MYGET_APIKEY }}
+    #     VERSION:
+    #   run: |
+    #     for p in Artifacts/*.nupkg; do
+    #       dotnet nuget push $p -k $APIKEY -s $NUGET_SOURCE -t 3000
+    #     done
+
+    - name: Add Git Tag
+      env:
+        VERSION: ${{ steps.get-version.outputs.version }}
+      run: |
+        git tag $VERSION
+        git push origin refs/tags/$VERSION
+
+
+    - name: Sync To Gerrit
+      env:
+        VERSION: ${{ steps.get-version.outputs.version }}
+        TARGET_BRANCH: ${{ github.event.inputs.target }}
+        GERRIT_BRANCH: ${{ steps.get-gerrit-branch.outputs.branch }}
+        GERRIT_URL: ssh://dotnetbuild@review.tizen.org:29418/platform/core/csapi/tizenfx
+      run: |
+        git config --global user.name "TizenAPI-Bot"
+        git config --global user.email "tizenapi@samsung.com"
+        git config core.sshCommand "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
+        git remote add gerrit $GERRIT_URL
+        git fetch gerrit $GERRIT_BRANCH
+        git checkout -t gerrit/$GERRIT_BRANCH
+        git merge --no-edit -s recursive -X theirs origin/$TARGET_BRANCH
+        ./packaging/makespec.sh -r $VERSION -n $VERSION -i $VERSION
+        git add packaging/
+        if [ $(git diff --cached --numstat | wc -l) -eq 0 ]; then
+          echo "## no changes to sync"
+          exit 0
+        fi
+        SUBMIT_TAG=submit/$GERRIT_BRANCH/$(date '+%Y%m%d.%H%M%S')
+        echo SUBMIT_TAG=$SUBMIT_TAG
+        git commit -m "Release $VERSION"
+        echo git push -f gerrit HEAD:$GERRIT_BRANCH
+        git tag -m "Release $VERSION" $SUBMIT_TAG
+        echo git push gerrit refs/tags/$SUBMIT_TAG
