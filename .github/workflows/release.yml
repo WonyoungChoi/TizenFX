@@ -1,0 +1,18 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      submitTag:
+        description: 'Submit Tag'
+
+jobs:
+
+  release:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Build
+      run: |
+        echo GITHUB_REF=$GITHUB_REF
+        echo SRTAG=${{ github.event.inputs.submitTag }}
