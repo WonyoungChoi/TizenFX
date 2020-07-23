@@ -77,8 +77,8 @@ jobs:
         VERSION: ${{ steps.get-version.outputs.version }}
       run: |
         if [ $(git tag -l "$VERSION") ]; then
-          echo "Version $VERSION has already been released."
-          exit 0
+          echo "::error::Version $VERSION has already been released."
+          exit 1
         fi
 
     - name: Setup SSH Private Keys
