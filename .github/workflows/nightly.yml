@@ -3,10 +3,56 @@ name: Nightly
 on:
   schedule:
     - cron: '0 15 * * *'
+  workflow_dispatch:
+
+env:
+  TARGET_BRANCHES: 'master API7 API5 API4'
 
 jobs:
-  API8:
+  release:
     runs-on: ubuntu-latest
     steps:
-      - name: trigger-release
-        run: echo "TBD"
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Check Branches
+      id: check-branches
+      run: |
+        TARGETS=""
+        for x in $TARGET_BRANCHES; do
+          if tag=$(git tag --contains origin/$x); then
+            if [[ ! $tag =~ ^[0-9]+\.[0-9]+\.[0-9]+ ]]; then
+              TARGETS="${TARGETS} $x"
+            fi
+          fi
+        done
+        echo "::set-output name=targets::${TARGETS}"
+
+    - name: Trigger Release
+      uses: actions/github-script@v2
+      env:
+        TARGETS: ${{ steps.check-branches.outputs.targets }}
+      with:
+        github-token: ${{ secrets.PERSONAL_TOKEN }}
+        script: |
+          var resp = await github.request('GET /repos/{owner}/{repo}/actions/workflows', {
+            owner: context.repo.owner,
+            repo: context.repo.repo
+          })
+          if (resp.status != 200) throw new Error('Failed to get workflow list.')
+          var release = resp.data.workflows.find(w => {
+            return w['name'] === 'Release'
+          })
+          if (!release) throw new Error('Unable to find Release workflow.')
+          var targets = process.env.TARGETS.trim().split(' ')
+          targets.forEach(async target => {
+            var dispatchResp = await github.request('POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches', {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: release.id,
+              ref: 'master',
+              inputs: { target }
+            })
+            console.log(`Event dispatch for ${target} : ${dispatchResp.status}`)
+          })
