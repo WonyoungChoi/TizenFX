@@ -21,3 +21,4 @@ jobs:
       run: |
         env
         ls -l
+        cat $GITHUB_EVENT_PATH
