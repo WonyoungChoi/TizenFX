@@ -12,4 +12,5 @@ jobs:
     steps:
       - name: info
         run: |
-          echo ${{ toJSON(github.event.workflow_run) }}
+          env
+          echo "${{ toJSON(github.event.workflow_run) }}"
