@@ -1,0 +1,15 @@
+name: "Post Build"
+
+on:
+  workflow_run:
+    workflows: ["Build"]
+    types:
+      - completed
+
+jobs:
+  post-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: info
+        run: |
+          echo ${{ github.event.workflow_run }}

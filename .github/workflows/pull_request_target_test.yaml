@@ -23,7 +23,7 @@ jobs:
         ls -l
         cat $GITHUB_EVENT_PATH
 
-    - name: Add Label 
+    - name: Add Label
       uses: actions/github-script@v2
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
