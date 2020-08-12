@@ -10,20 +10,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+    - name: Information
+      run: |
+        echo "PR_SHA: ${{ github.event.pull_request.sha }}"
+        ls -l
+        env
+        echo "${{ toJson(github.event) }}"
     - uses: actions/checkout@v2
       with:
         ref: ${{ github.event.pull_request.sha }}
-
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.1.x
-
-    - name: Test
-      run: |
-        env
-        ls -l
-        cat $GITHUB_EVENT_PATH
 
     - name: Add Label
       uses: actions/github-script@v2
