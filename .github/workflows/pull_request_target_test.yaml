@@ -12,15 +12,16 @@ jobs:
     steps:
     - name: Information
       run: |
+        echo "PR NO: ${{ github.event.pull_request.number }}"
         echo "PR REPO: ${{ github.event.pull_request.head.repo.full_name }}"
         echo "PR_SHA: ${{ github.event.pull_request.head.sha }}"
-        ls -l
-        env
     - uses: actions/checkout@v2
       with:
-        repository: ${{ github.event.pull_request.head.repo.full_name }}
-        ref: ${{ github.event.pull_request.head.sha }}
-
+        ref: refs/remotes/pull/${{ github.event.pull_request.number }}/merge
+    - name: List Files
+      run: |
+        ls -l
+        env
     - name: Add Label
       uses: actions/github-script@v2
       with:
