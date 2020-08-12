@@ -12,13 +12,14 @@ jobs:
     steps:
     - name: Information
       run: |
-        echo "PR_SHA: ${{ github.event.pull_request.sha }}"
+        echo "PR_SHA: ${{ github.event.pull_request.head.sha }}"
         ls -l
         env
         echo "${{ toJson(github.event) }}"
     - uses: actions/checkout@v2
       with:
-        ref: ${{ github.event.pull_request.sha }}
+        repository: ${{ github.event.pull_request.head.repo.full_name }}
+        ref: ${{ github.event.pull_request.head.sha }}
 
     - name: Add Label
       uses: actions/github-script@v2
