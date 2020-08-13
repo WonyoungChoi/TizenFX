@@ -21,8 +21,8 @@ jobs:
 
     - name: Test
       run: |
-        echo ${{ fromJSON(steps.metadata.outputs.data).labels }}
-        echo ${{ steps.metadata.outputs.data.labels }}
+        echo ${{ fromJSON(steps.metadata.outputs.data).api-level }}
+        echo ${{ steps.metadata.outputs.data.api-level }}
 
     - name: Add Label
       if: ${{ steps.metadata.outputs.data }}
