@@ -1,0 +1,28 @@
+name: "Check API Level"
+
+on:
+  pull_request_target:
+    branches:
+    - master
+    - API*
+
+jobs:
+  check-level:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: TizenAPI/tizenfx-build-actions/branch-metadata@master
+      id: metadata
+      with:
+        ref: ${{ github.base_ref }}
+
+    - name: Add Label
+      if: ${{ steps.metadata.outputs.data }}
+      uses: actions/github-script@v2
+      with:
+        script: |
+          github.issues.addLabels({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            labels: ${{ fromJSON(steps.metadata.outputs.data).labels }}
+          })
