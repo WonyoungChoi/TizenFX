@@ -7,9 +7,13 @@ on:
     - API*
 
 jobs:
-  check-level:
+  AddLabels:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v2
+      with:
+        ref: master
+
     - uses: TizenAPI/tizenfx-build-actions/branch-metadata@master
       id: metadata
       with:
