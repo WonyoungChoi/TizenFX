@@ -26,21 +26,10 @@ jobs:
         BRANCH_METADATA: ${{ steps.metadata.outputs.data }}
       with:
         script: |
-          console.log(${{ steps.metadata.outputs.data }})
           var metadata = JSON.parse(process.env.BRANCH_METADATA)
-          console.log(metadata)
-          console.log(metadata.labels)
-
-
-
-    # - name: Add Label
-    #   if: ${{ steps.metadata.outputs.data }}
-    #   uses: actions/github-script@v2
-    #   with:
-    #     script: |
-    #       github.issues.addLabels({
-    #         issue_number: context.issue.number,
-    #         owner: context.repo.owner,
-    #         repo: context.repo.repo,
-    #         labels: ${{ fromJSON(steps.metadata.outputs.data).labels }}
-    #       })
+          github.issues.addLabels({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            labels: metadata.labels
+          })
