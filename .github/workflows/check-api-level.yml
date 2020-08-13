@@ -22,10 +22,12 @@ jobs:
     - name: Add Label
       if: ${{ steps.metadata.outputs.data }}
       uses: actions/github-script@v2
+      env:
+        BRANCH_METADATA: ${{ steps.metadata.outputs.data }}
       with:
         script: |
           console.log(${{ steps.metadata.outputs.data }})
-          var metadata = JSON.parse(${{ steps.metadata.outputs.data }})
+          var metadata = JSON.parse(process.env.BRANCH_METADATA)
           console.log(metadata)
           console.log(metadata.labels)
 
