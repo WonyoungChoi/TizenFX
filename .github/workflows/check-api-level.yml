@@ -26,6 +26,7 @@ jobs:
         script: |
           console.log(${{ steps.metadata.outputs.data }})
           console.log(${{ fromJSON(steps.metadata.outputs.data) }})
+          console.log(${{ fromJSON(steps.metadata.outputs.data.labels) }})
 
 
     # - name: Add Label
