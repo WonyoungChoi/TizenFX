@@ -19,6 +19,11 @@ jobs:
       with:
         ref: ${{ github.base_ref }}
 
+    - name: Test
+      run: |
+        echo ${{ fromJSON(steps.metadata.outputs.data).labels }}
+        echo ${{ steps.metadata.outputs.data.labels }}
+
     - name: Add Label
       if: ${{ steps.metadata.outputs.data }}
       uses: actions/github-script@v2
