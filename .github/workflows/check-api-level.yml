@@ -24,9 +24,18 @@ jobs:
       uses: actions/github-script@v2
       with:
         script: |
-          github.issues.addLabels({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            labels: ${{ fromJSON(steps.metadata.outputs.data).labels }}
-          })
+          console.log(${{ steps.metadata.outputs.data }})
+          console.log(${{ fromJSON(steps.metadata.outputs.data) }})
+
+
+    # - name: Add Label
+    #   if: ${{ steps.metadata.outputs.data }}
+    #   uses: actions/github-script@v2
+    #   with:
+    #     script: |
+    #       github.issues.addLabels({
+    #         issue_number: context.issue.number,
+    #         owner: context.repo.owner,
+    #         repo: context.repo.repo,
+    #         labels: ${{ fromJSON(steps.metadata.outputs.data).labels }}
+    #       })
