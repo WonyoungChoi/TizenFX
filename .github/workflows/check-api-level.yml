@@ -7,7 +7,7 @@ on:
     - API*
 
 jobs:
-  AddLabels:
+  add-labels:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -19,12 +19,7 @@ jobs:
       with:
         ref: ${{ github.base_ref }}
 
-    - name: Test
-      run: |
-        echo ${{ fromJSON(steps.metadata.outputs.data).api-level }}
-        echo ${{ steps.metadata.outputs.data.api-level }}
-
-    - name: Add Label
+    - name: Add Labels
       if: ${{ steps.metadata.outputs.data }}
       uses: actions/github-script@v2
       env:

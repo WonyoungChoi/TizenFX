@@ -1,0 +1,52 @@
+name: "Build Pull Request"
+
+on:
+  pull_request:
+    branches:
+    - master
+    - API*
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.x
+
+    - uses: lots0logs/gh-action-get-changed-files@2.1.4
+      id: getChangedFiles
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Build
+      id: build
+      uses: TizenAPI/tizenfx-build-actions/problem-filter@master
+      with:
+        run: ./build.sh full /p:BuildWithAnalyzer=True
+        files: ${{ steps.getChangedFiles.outputs.all }}
+
+    - name: Save Error Report
+      if: ${{ failure() && steps.build.outputs.errors }}
+      env:
+        BUILD_ERRORS: ${{ steps.build.outputs.errors }}
+      run: |
+        echo $BUILD_ERRORS > Artifacts/errors.txt
+
+    - name: Pack
+      run: ./build.sh pack
+
+    - name: Extract API
+      run: |
+        dotnet run print --format=json --include-hidden \
+                         -o Artifacts/api.json Artifacts/bin/public/
+
+    - uses: actions/upload-artifact@v2
+      with:
+        if-no-files-found: ignore
+        path: |
+          Artifacts/errors.txt
+          Artifacts/api.json
