@@ -17,7 +17,8 @@ jobs:
       with:
         dotnet-version: 3.1.x
 
-    - uses: lots0logs/gh-action-get-changed-files@2.1.4
+    - name: Get Changed Files
+      uses: lots0logs/gh-action-get-changed-files@2.1.4
       id: getChangedFiles
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
@@ -39,10 +40,17 @@ jobs:
     - name: Pack
       run: ./build.sh pack
 
+    - name: Checkout APITool
+      uses: actions/checkout@v2
+      with:
+        repository: TizenAPI/APITool
+        path: .apitool
+
     - name: Extract API
       run: |
-        dotnet run print --format=json --include-hidden \
-                         -o Artifacts/api.json Artifacts/bin/public/
+        dotnet run -p .apitool/ \
+            -- print --format=json --include-hidden \
+            -o Artifacts/api.json Artifacts/bin/public/
 
     - uses: actions/upload-artifact@v2
       with:
