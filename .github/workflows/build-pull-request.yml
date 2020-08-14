@@ -35,6 +35,7 @@ jobs:
       env:
         BUILD_ERRORS: ${{ steps.build.outputs.errors }}
       run: |
+        mkdir Artifacts
         echo $BUILD_ERRORS > Artifacts/errors.txt
 
     - name: Pack
@@ -56,5 +57,5 @@ jobs:
       with:
         if-no-files-found: ignore
         path: |
-          Artifacts/errors.txt
           Artifacts/api.json
+          Artifacts/errors.txt
