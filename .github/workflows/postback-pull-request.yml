@@ -1,8 +1,8 @@
-name: "Post Build"
+name: "Postback Pull Request"
 
 on:
   workflow_run:
-    workflows: ["Build"]
+    workflows: ["Build Pull Request"]
     types:
       - completed
 

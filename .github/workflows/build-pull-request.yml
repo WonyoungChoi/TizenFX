@@ -54,6 +54,7 @@ jobs:
             -o Artifacts/api.json Artifacts/bin/public/
 
     - uses: actions/upload-artifact@v2
+      if: ${{ always() }}
       with:
         if-no-files-found: ignore
         path: |
