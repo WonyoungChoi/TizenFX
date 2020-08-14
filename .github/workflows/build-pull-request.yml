@@ -57,5 +57,9 @@ jobs:
       if: ${{ always() }}
       with:
         if-no-files-found: ignore
-        path: |
-          Artifacts/*.json
+        path: Artifacts/*.json
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: nupkg
+        path: Artifacts/*.nupkg

@@ -10,7 +10,14 @@ jobs:
   post-build:
     runs-on: ubuntu-latest
     steps:
-      - name: info
-        run: |
-          env
-          echo "${{ toJSON(github.event) }}"
+    - name: info
+      run: |
+        echo "ARTIFACTS_URL: ${{ github.event.workflow_run.artifacts_url }}"
+        env
+        echo "${{ toJSON(github.event) }}"
+
+    # - name: Donwload Artifacts from Build
+    #   uses: actions/github-script@v2
+    #   with:
+    #     script: |
+    #
