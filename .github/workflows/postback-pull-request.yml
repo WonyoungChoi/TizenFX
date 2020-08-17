@@ -7,9 +7,14 @@ on:
       - completed
 
 jobs:
-  post-build:
+  postback:
     runs-on: ubuntu-latest
     steps:
+
+    - name: Info
+      run: |
+        env
+        echo "${{ github.event.workflow_run }}"
 
     - name: Download Artifacts from Build
       uses: TizenAPI/tizenfx-build-actions/download-workflow-artifacts@master
