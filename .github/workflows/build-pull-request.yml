@@ -63,7 +63,6 @@ jobs:
 
   check-api:
     needs: [build]
-    if: ${{ needs.build.status == 'success' }}
     runs-on: ubuntu-latest
     steps:
     - name: Download Artifacts
