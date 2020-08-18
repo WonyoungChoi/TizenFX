@@ -34,6 +34,8 @@ namespace ElmSharp
         {
             Style = "transparent";
         }
+        
+        public int TestProp {get; set;}
 
         /// <summary>
         /// Sets or gets the color to the background.
