@@ -11,9 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - uses: TizenAPI/tizenfx-build-actions/branch-metadata@master
+    - name: Get Branch Metadata
+      uses: TizenAPI/tizenfx-build-actions/branch-metadata@master
       id: metadata
       with:
+        token: ${{ secrets.TIZENAPI_BOT_PAT }}
         ref: ${{ github.base_ref }}
 
     - name: Add Labels

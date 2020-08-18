@@ -66,6 +66,7 @@ jobs:
       uses: TizenAPI/tizenfx-build-actions/branch-metadata@master
       id: metadata
       with:
+        token: ${{ secrets.TIZENAPI_BOT_PAT }}
         ref: ${{ steps.pull_request.outputs.base_ref }}
 
     - name: Compare API
