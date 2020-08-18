@@ -7,6 +7,7 @@ on:
     - API*
 
 jobs:
+
   build:
     runs-on: ubuntu-latest
     steps:
@@ -56,10 +57,38 @@ jobs:
     - uses: actions/upload-artifact@v2
       if: ${{ always() }}
       with:
+        name: reports
         if-no-files-found: ignore
         path: Artifacts/*.json
 
+  check-api:
+    needs: [build]
+    if: ${{ needs.build.status == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download Artifacts
+      uses: actions/download-artifacts@v2
+      with:
+        name: reports
+        path: Artifacts
+
+    - name: Get Metadata of Target Branch
+      uses: TizenAPI/tizenfx-build-actions/branch-metadata@master
+      id: metadata
+      with:
+        ref: ${{ github.base_ref }}
+
+    - name: Check API Compatibilities
+      uses: TizenAPI/tizenfx-build-actions/apidb-compare@master
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      with:
+        category: ${{ fromJson(steps.metadata.outputs.data).api-level }}
+        path: Artifacts/api.json
+        output: Artifacts/api-comp.json
+
     - uses: actions/upload-artifact@v2
       with:
-        name: nupkg
-        path: Artifacts/*.nupkg
+        name: reports
+        path: Artifacts/api-comp.json

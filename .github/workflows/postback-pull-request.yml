@@ -16,7 +16,7 @@ jobs:
       with:
         token: ${{ secrets.TIZENAPI_BOT_PAT }}
         run-id: ${{ github.event.workflow_run.id }}
-        name: artifact
+        name: reports
         path: Artifacts
 
     - name: Find Pull Request
@@ -57,22 +57,10 @@ jobs:
             body: '## Build Error:\n```\n' + errors + '\n```'
           });
 
-    - name: Get Metadata of Target Branch
+    - name: Report API comparison result
       if: ${{ github.event.workflow_run.conclusion == 'success' }}
-      uses: TizenAPI/tizenfx-build-actions/branch-metadata@master
-      id: metadata
-      with:
-        ref: ${{ steps.pull_request.outputs.base_ref }}
-
-    - name: Compare API
-      if: ${{ github.event.workflow_run.conclusion == 'success' }}
-      uses: TizenAPI/tizenfx-build-actions/apidb@master
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      uses: TizenAPI/tizenfx-build-actions/apidb-report@master
       with:
         token: ${{ secrets.TIZENAPI_BOT_PAT }}
         issue-number: ${{ steps.pull_request.outputs.number }}
-        operation: compare
-        category: ${{ fromJson(steps.metadata.outputs.data).api-level }}
-        path: Artifacts/api.json
+        path: Artifacts/api-comp.json
