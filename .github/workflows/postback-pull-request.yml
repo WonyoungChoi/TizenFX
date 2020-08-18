@@ -13,7 +13,6 @@ jobs:
 
     - name: Info
       run: |
-        echo "${{ toJson(github.context) }}"
         env
         echo "${{ toJson(github.event.workflow_run) }}"
 
@@ -32,17 +31,17 @@ jobs:
         WORKFLOW_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
       with:
         script: |
-          const res = github.pulls.list({
+          const res = await github.pulls.list({
             owner: context.repo.owner,
             repo: context.repo.repo,
             state: 'open'
           });
-          const pr = res.data.find(d => d.head.sha === process.env.WORKFLOW_HEAD_SHA);
-          if (pr) {
-            core.setOutput('number', pr.number);
+          if (res.status === 200) {
+            const pr = res.data.find(d => d.head.sha == process.env.WORKFLOW_HEAD_SHA);
+            if (pr) {
+              core.setOutput('number', pr.number);
+            }
           }
-
-
 
     - name: Show Files
       run: |
