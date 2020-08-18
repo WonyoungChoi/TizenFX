@@ -11,11 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - name: Info
-      run: |
-        env
-        echo "${{ toJson(github.event.workflow_run) }}"
-
     - name: Download Artifacts from Build
       uses: TizenAPI/tizenfx-build-actions/download-workflow-artifacts@master
       with:
@@ -59,16 +54,18 @@ jobs:
             issue_number: process.env.PR_NUMBER,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: '## Build Error:\n```' + errors + '```'
+            body: '## Build Error:\n```\n' + errors + '\n```'
           });
 
     - name: Get Metadata of Target Branch
+      if: ${{ github.event.workflow_run.conclusion == 'success' }}
       uses: TizenAPI/tizenfx-build-actions/branch-metadata@master
       id: metadata
       with:
         ref: ${{ steps.pull_request.outputs.base_ref }}
 
     - name: Compare API
+      if: ${{ github.event.workflow_run.conclusion == 'success' }}
       uses: TizenAPI/tizenfx-build-actions/apidb@master
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
