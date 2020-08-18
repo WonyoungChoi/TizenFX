@@ -13,6 +13,7 @@ jobs:
 
     - name: Info
       run: |
+        echo "${{ toJson(github.context) }}"
         env
         echo "${{ toJson(github.event.workflow_run) }}"
 
@@ -24,5 +25,26 @@ jobs:
         name: artifact
         path: Artifacts
 
+    - name: Find Pull Request
+      id: pull_request
+      uses: actions/github-script@v2
+      env:
+        WORKFLOW_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+      with:
+        script: |
+          const res = github.pulls.list({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            state: 'open'
+          });
+          const pr = res.data.find(d => d.head.sha === process.env.WORKFLOW_HEAD_SHA);
+          if (pr) {
+            core.setOutput('number', pr.number);
+          }
+
+
+
     - name: Show Files
-      run: ls -R
+      run: |
+        echo "PR_NUMBER: ${{ steps.pull_request.outputs.number }}"
+        ls -R
