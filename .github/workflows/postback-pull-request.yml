@@ -77,5 +77,5 @@ jobs:
         token: ${{ secrets.TIZENAPI_BOT_PAT }}
         issue-number: ${{ steps.pull_request.outputs.number }}
         operation: compare
-        category: ${{ steps.metadata.outputs.api-level }}
+        category: ${{ fromJson(steps.metadata.outputs.data).api-level }}
         path: Artifacts/api.json
