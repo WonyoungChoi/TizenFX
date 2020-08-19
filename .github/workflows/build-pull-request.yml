@@ -65,26 +65,41 @@ jobs:
     needs: [build]
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v2
+      with:
+        ref: ${{ github.base_ref }}
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.x
+
+    - name: Build Base Branch
+      run: ./build.sh full
+
+    - name: Checkout APITool
+      uses: actions/checkout@v2
+      with:
+        repository: TizenAPI/APITool
+        path: .apitool
+
+    - name: Extract Base API
+      run: |
+        dotnet run -p .apitool/ \
+            -- print --format=json --include-hidden \
+            -o Artifacts/base-api.json Artifacts/bin/public/
+
     - name: Download Artifacts
       uses: actions/download-artifact@v2
       with:
         name: reports
         path: Artifacts
 
-    - name: Get Metadata of Target Branch
-      uses: TizenAPI/tizenfx-build-actions/branch-metadata@master
-      id: metadata
-      with:
-        ref: ${{ github.base_ref }}
-
     - name: Check API Compatibilities
       uses: TizenAPI/tizenfx-build-actions/apidb-compare@master
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       with:
-        category: ${{ fromJson(steps.metadata.outputs.data).api-level }}
-        path: Artifacts/api.json
+        file: Artifacts/api.json
+        base-file: Artifacts/base-api.json
         output: Artifacts/api-comp.json
 
     - uses: actions/upload-artifact@v2
