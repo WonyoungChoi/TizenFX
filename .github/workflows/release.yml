@@ -26,7 +26,7 @@ jobs:
     - name: Get Version
       id: version
       env:
-        VERSION_PREFIX: ${{ steps.metadata.output.version-prefix }}
+        VERSION_PREFIX: ${{ steps.metadata.outputs.version-prefix }}
       run: |
         VERSION=$VERSION_PREFIX.$((10000+$(git rev-list --count HEAD)))
         echo VERSION=$VERSION
