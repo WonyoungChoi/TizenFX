@@ -28,7 +28,7 @@ jobs:
       id: build
       uses: TizenAPI/tizenfx-build-actions/problem-filter@master
       with:
-        run: ./build.sh full /p:BuildWithAnalyzer=True
+        run: ./build.sh full /p:BuildWithAnalyzer=True -consoleloggerparameters:NoSummary
         files: ${{ steps.getChangedFiles.outputs.all }}
 
     - name: Save Error Report
