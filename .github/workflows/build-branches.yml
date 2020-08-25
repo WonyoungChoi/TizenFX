@@ -40,6 +40,9 @@ jobs:
 
     - name: Upload API Spec to S3
       uses: TizenAPI/tizenfx-build-actions/s3-upload@master
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       with:
         file: Artifacts/api.json
         region: ap-northeast-2
