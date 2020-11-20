@@ -7,6 +7,7 @@ TizenFX API, which allows you to access platform-specific features not covered b
 
 ## Branches
 
+
 | Branch | API Level | Target Framework | API Reference | Platform          | myget.org | nuget.org  |
 |--------|:---------:|------------------|---------------|-------------------|-----------|------------|
 |master  | 8         | tizen80 | [Link](https://samsung.github.io/TizenFX/master/) | Tizen vNext | [![api8_myget](https://img.shields.io/tizen.myget/dotnet/vpre/Tizen.NET.API8.svg)](https://tizen.myget.org/feed/dotnet/package/nuget/Tizen.NET) | |
