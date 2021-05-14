@@ -3,6 +3,11 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Tizen.NUI</RootNamespace>
+    <NoWarn>$(NoWarn);CS0618</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <SupportedProfiles>wearable</SupportedProfiles>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,10 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="res\*.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="res\*.png">
+    <None Update="res\*.png;res\*.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

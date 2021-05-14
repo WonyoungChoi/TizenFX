@@ -249,8 +249,9 @@ namespace Tizen.NUI.Samples
             source.MinValue = MIN_VALUE;
             source.MaxValue = MAX_VALUE;
             source.StateChangedEvent += OnStateChanged;
-            source.ValueChangedEvent += OnValueChanged;
-            source.SlidingFinishedEvent += OnSlidingFinished;
+            source.ValueChanged += OnValueChanged;
+            source.SlidingStarted += OnSlidingStarted;
+            source.SlidingFinished += OnSlidingFinished;
             source.Size = new Size(w, h);
             source.CurrentValue = curValue;
             return source;
@@ -266,14 +267,15 @@ namespace Tizen.NUI.Samples
             source.MinValue = MIN_VALUE;
             source.MaxValue = MAX_VALUE;
             source.StateChangedEvent += OnStateChanged;
-            source.ValueChangedEvent += OnValueChanged;
-            source.SlidingFinishedEvent += OnSlidingFinished;
+            source.ValueChanged += OnValueChanged;
+            source.SlidingStarted += OnSlidingStarted;
+            source.SlidingFinished += OnSlidingFinished;
             source.Size = new Size(w, h);
             source.CurrentValue = curValue;
             return source;
         }
 
-        private void OnValueChanged(object sender, Slider.ValueChangedArgs args)
+        private void OnValueChanged(object sender, SliderValueChangedEventArgs args)
         {
             Slider source = sender as Slider;
             if (source != null)
@@ -289,7 +291,23 @@ namespace Tizen.NUI.Samples
             }
         }
 
-        private void OnSlidingFinished(object sender, Slider.SlidingFinishedArgs args)
+        private void OnSlidingStarted(object sender, SliderSlidingStartedEventArgs args)
+        {
+            Slider source = sender as Slider;
+            if (source != null)
+            {
+                if (source == slider_style[0] || source == slider_style[1] || source == slider_style[2] || source == slider_style[3])
+                {
+                    inforText[1].Text = "Started currentValue = " + args.CurrentValue;
+                }
+                else
+                {
+                    inforText[0].Text = "Started currentValue = " + args.CurrentValue;
+                }
+            }
+        }
+
+        private void OnSlidingFinished(object sender, SliderSlidingFinishedEventArgs args)
         {
             Slider source = sender as Slider;
             if (source != null)

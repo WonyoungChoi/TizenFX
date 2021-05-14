@@ -78,7 +78,6 @@ namespace Tizen.NUI.Components
             Initialize();
         }
 
-        public TextLabelStyle Style => ViewStyle as TextLabelStyle;
         /// <summary>
         /// The constructor of the Title class with specific Style.
         /// </summary>
@@ -174,8 +173,8 @@ namespace Tizen.NUI.Components
 
         private void UpdateImage()
         {
-            leftImage.Size.Width = fadeOutWidth;
-            rightImage.Size.Width = fadeOutWidth;
+            leftImage.SizeWidth = fadeOutWidth;
+            rightImage.SizeWidth = fadeOutWidth;
 
             if (fadeOutWidth > 0)
             {

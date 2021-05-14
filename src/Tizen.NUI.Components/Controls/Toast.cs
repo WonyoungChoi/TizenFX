@@ -18,6 +18,7 @@ using System;
 using Tizen.NUI.BaseComponents;
 using System.ComponentModel;
 using Tizen.NUI.Binding;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Tizen.NUI.Components
 {
@@ -38,7 +39,10 @@ namespace Tizen.NUI.Components
             if (newValue != null)
             {
                 instance.strText = (string)(newValue);
-                instance.Style.Text.Text = instance.strText;
+                if (null != instance.textLabel)
+                {
+                    instance.textLabel.Text = instance.strText;
+                }
             }
         },
         defaultValueCreator: (bindable) =>
@@ -54,19 +58,22 @@ namespace Tizen.NUI.Components
             var instance = (Toast)bindable;
             if (newValue != null)
             {
-                instance.Style.Duration = (uint)newValue;
+                if (instance.timer == null)
+                {
+                    instance.timer = new Timer(instance.duration);
+                }
                 instance.timer.Interval = (uint)newValue;
             }
         },
         defaultValueCreator: (bindable) =>
         {
             var instance = (Toast)bindable;
-            return instance.Style.Duration ?? instance.duration;
+            return instance.timer == null ? instance.duration : instance.timer.Interval;
         });
 
         /// This will be public opened in tizen_6.0 after ACR done. Before ACR, need to be hidden as inhouse API.
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public static Toast FromText(string text, uint duration) 
+        public static Toast FromText(string text, uint duration)
         {
             Toast toast = new Toast();
             toast.Message = text;
@@ -82,11 +89,6 @@ namespace Tizen.NUI.Components
         private Timer timer = null;
         private readonly uint duration = 3000;
 
-        /// <summary>
-        /// Get style of toast.
-        /// </summary>
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public new ToastStyle Style => ViewStyle as ToastStyle;
         static Toast() { }
 
         /// <summary>
@@ -96,7 +98,6 @@ namespace Tizen.NUI.Components
         [Obsolete("Deprecated in API8; Will be removed in API10")]
         public Toast() : base()
         {
-            Initialize();
         }
 
         /// <summary>
@@ -106,7 +107,6 @@ namespace Tizen.NUI.Components
         [EditorBrowsable(EditorBrowsableState.Never)]
         public Toast(ToastStyle toastStyle) : base(toastStyle)
         {
-            Initialize();
         }
 
         /// <summary>
@@ -116,13 +116,14 @@ namespace Tizen.NUI.Components
         [EditorBrowsable(EditorBrowsableState.Never)]
         public Toast(string style) : base(style)
         {
-            Initialize();
         }
 
         /// <summary>
         /// Gets or sets the text array of toast.
         /// </summary>
         /// <since_tizen> 6 </since_tizen>
+        /// It will be removed in API10
+        [SuppressMessage("Microsoft.Performance", "CA1819: Properties should not return arrays")]
         [Obsolete("Deprecated in API8; Will be removed in API10")]
         public string[] TextArray
         {
@@ -139,13 +140,13 @@ namespace Tizen.NUI.Components
         {
             get
             {
-                return (float)Style?.Text?.PointSize?.All;
+                return (float)textLabel?.PointSize;
             }
             set
             {
-                if (null != Style?.Text)
+                if (null != textLabel)
                 {
-                    Style.Text.PointSize = value;
+                    textLabel.PointSize = value;
                 }
             }
         }
@@ -159,13 +160,13 @@ namespace Tizen.NUI.Components
         {
             get
             {
-                return Style?.Text?.FontFamily?.All;
+                return textLabel?.FontFamily;
             }
             set
             {
-                if (null != Style?.Text)
+                if (null != textLabel)
                 {
-                    Style.Text.FontFamily = value;
+                    textLabel.FontFamily = value;
                 }
             }
         }
@@ -179,13 +180,13 @@ namespace Tizen.NUI.Components
         {
             get
             {
-                return Style?.Text?.TextColor?.All;
+                return textLabel?.TextColor;
             }
             set
             {
-                if (null != Style?.Text)
+                if (null != textLabel)
                 {
-                    Style.Text.TextColor = value;
+                    textLabel.TextColor = value;
                 }
             }
         }
@@ -199,13 +200,13 @@ namespace Tizen.NUI.Components
         {
             get
             {
-                return Style?.Text?.HorizontalAlignment ?? HorizontalAlignment.Center;
+                return textLabel?.HorizontalAlignment ?? HorizontalAlignment.Center;
             }
             set
             {
-                if (null != Style?.Text)
+                if (null != textLabel)
                 {
-                    Style.Text.HorizontalAlignment = value;
+                    textLabel.HorizontalAlignment = value;
                 }
             }
         }
@@ -216,8 +217,8 @@ namespace Tizen.NUI.Components
         {
             window = win;
             window.Add(this);
-            this.Position.X = (window.Size.Width - this.Size.Width) / 2;
-            this.Position.Y = (window.Size.Height - this.Size.Height) / 2;
+            this.PositionX = (window.Size.Width - this.Size.Width) / 2;
+            this.PositionY = (window.Size.Height - this.Size.Height) / 2;
             timer.Start();
         }
 
@@ -248,13 +249,13 @@ namespace Tizen.NUI.Components
         {
             get
             {
-                return Style.Text.Padding;
+                return textLabel?.Padding;
             }
             set
             {
-                if (null != value && null != Style.Text)
+                if (null != value && null != textLabel)
                 {
-                    Style.Text.Padding.CopyFrom(value);
+                    textLabel.Padding.CopyFrom(value);
                 }
             }
         }
@@ -290,6 +291,33 @@ namespace Tizen.NUI.Components
             }
         }
 
+        /// <inheritdoc/>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public override void OnInitialize()
+        {
+            base.OnInitialize();
+
+            WidthResizePolicy = ResizePolicyType.FitToChildren;
+            HeightResizePolicy = ResizePolicyType.FitToChildren;
+
+            textLabel = new TextLabel()
+            {
+                PositionUsesPivotPoint = true,
+                ParentOrigin = Tizen.NUI.ParentOrigin.Center,
+                PivotPoint = Tizen.NUI.PivotPoint.Center,
+                WidthResizePolicy = ResizePolicyType.UseNaturalSize,
+                HeightResizePolicy = ResizePolicyType.UseNaturalSize,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                TextColor = Color.White,
+            };
+            this.Add(textLabel);
+
+            this.VisibilityChanged += OnVisibilityChanged;
+            timer = new Timer(duration);
+            timer.Tick += OnTick;
+        }
+
         /// <summary>
         /// Apply style to toast.
         /// </summary>
@@ -299,15 +327,8 @@ namespace Tizen.NUI.Components
         {
             base.ApplyStyle(viewStyle);
 
-            ToastStyle toastStyle = viewStyle as ToastStyle;
-
-            if (null != toastStyle)
+            if (viewStyle is ToastStyle toastStyle)
             {
-                if (null == textLabel)
-                {
-                    textLabel = new TextLabel();
-                    this.Add(textLabel);
-                }
                 textLabel.ApplyStyle(toastStyle.Text);
             }
         }
@@ -318,7 +339,9 @@ namespace Tizen.NUI.Components
         /// <param name="type">dispose types.</param>
         /// <since_tizen> 6 </since_tizen>
         [Obsolete("Deprecated in API8; Will be removed in API10")]
+#pragma warning disable CS0809 // Obsolete member overrides non-obsolete member, It will be removed in API10
         protected override void Dispose(DisposeTypes type)
+#pragma warning restore CS0809 // Obsolete member overrides non-obsolete member, It will be removed in API10
         {
             if (disposed)
             {
@@ -352,19 +375,6 @@ namespace Tizen.NUI.Components
         protected override ViewStyle CreateViewStyle()
         {
             return new ToastStyle();
-        }
-
-        private void Initialize()
-        {
-            if (null == textLabel)
-            {
-                textLabel = new TextLabel();
-                this.Add(textLabel);
-            }
-
-            this.VisibilityChanged += OnVisibilityChanged;
-            timer = new Timer(Style.Duration ?? duration);
-            timer.Tick += OnTick;
         }
 
         private bool OnTick(object sender, EventArgs e)

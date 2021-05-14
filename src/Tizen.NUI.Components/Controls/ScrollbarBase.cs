@@ -31,15 +31,15 @@ namespace Tizen.NUI.Components
         /// <summary>
         /// Create an empty ScrollbarBase.
         /// </summary>
-        public ScrollbarBase() : base()
+        protected ScrollbarBase()
         {
         }
 
         /// <summary>
-        /// Create an empty Scrollbar with a ControlStyle instance to set style properties.
+        /// Create an empty Scrollbar with a ViewStyle instance to set style properties.
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public ScrollbarBase(ControlStyle style) : base(style)
+        protected ScrollbarBase(ControlStyle style) : base(style)
         {
         }
 
@@ -54,6 +54,25 @@ namespace Tizen.NUI.Components
 
 
         #region Methods
+
+        /// <summary>
+        /// Removes a view from its parent ScrollableBase. If a view has no parent, this method does nothing.
+        /// </summary>
+        public new void Unparent()
+        {
+            (GetParent() as ScrollableBase)?.BaseRemove(this);
+        }
+
+        /// <summary>
+        /// Update content length and position at once.
+        /// </summary>
+        /// <param name="contentLength">The total length of the content.</param>
+        /// <param name="viewportLength">The length of the viewport representing the amount of visible content.</param>
+        /// <param name="position">The destination position of the View in content length. This is the View's top position if the scroller is vertical, otherwise, View's left position.</param>
+        /// <param name="durationMs">The time it takes to scroll in milliseconds.</param>
+        /// <param name="alphaFunction">The timing function used in animation. It describes the rate of change of the animation parameter over time. (e.g. EaseOut)</param>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public abstract void Update(float contentLength, float viewportLength, float position, uint durationMs = 0, AlphaFunction alphaFunction = null);
 
         /// <summary>
         /// Update content length and position at once.
@@ -83,6 +102,18 @@ namespace Tizen.NUI.Components
         /// <param name="isHorizontal">Whether the direction of scrolling is horizontal or not. It is vertical by default.</param>
         [EditorBrowsable(EditorBrowsableState.Never)]
         public abstract void Initialize(float contentLength, float viewportLength, float currentPosition, bool isHorizontal = false);
+
+        /// <summary>
+        /// Scroll position given to ScrollTo or Update.
+        /// </summary>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public abstract float ScrollPosition { get; }
+
+        /// <summary>
+        /// Current scroll position in the middle of ScrollTo or Update animation.
+        /// </summary>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public abstract float ScrollCurrentPosition { get; }
 
         #endregion Methods
     }

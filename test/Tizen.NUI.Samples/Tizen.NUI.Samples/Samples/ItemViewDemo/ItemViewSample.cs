@@ -210,8 +210,8 @@ namespace Tizen.NUI.Samples
             mContentView.Add(mItemView);
 
             mItemView.Layout = mLayout;
-            mItemView.SetMinimumSwipeDistance(MIN_SWIPE_DISTANCE);
-            mItemView.SetMinimumSwipeSpeed(MIN_SWIPE_SPEED);
+            mItemView.MinimumSwipeDistance = MIN_SWIPE_DISTANCE;
+            mItemView.MinimumSwipeSpeed = MIN_SWIPE_SPEED;
 
             SetLayout((int)mCurrentLayout);
             SetLayoutTitle();
@@ -488,7 +488,7 @@ namespace Tizen.NUI.Samples
             mEditButton.IsSelectable = true;
             mEditButton.Size = new Size(34, 34);
             mEditButton.LeaveRequired = true;
-            mEditButton.ClickEvent += (obj, e) =>
+            mEditButton.Clicked += (obj, e) =>
             {
                 SwitchToNextMode();
             };
@@ -522,7 +522,7 @@ namespace Tizen.NUI.Samples
             mLayoutButton.IsSelectable = true;
             mLayoutButton.Size = new Size(34, 34);
             mLayoutButton.LeaveRequired = true;
-            mLayoutButton.ClickEvent += (obj, e) =>
+            mLayoutButton.Clicked += (obj, e) =>
             {
                 mCurrentLayout = (mCurrentLayout + 1) % (int)mItemView.GetLayoutCount();
                 ChangeLayout();
@@ -573,9 +573,9 @@ namespace Tizen.NUI.Samples
             mDeleteButton.Size = new Size(50, 50);
             mDeleteButton.LeaveRequired = true;
             mDeleteButton.Hide();
-            mDeleteButton.ClickEvent += (obj, e) =>
+            mDeleteButton.Clicked += (obj, e) =>
             {
-                ItemIdContainer removeList = new ItemIdContainer();
+                ItemIdCollection removeList = new ItemIdCollection();
                 for (uint i = 0; i < mItemView.GetChildCount(); ++i)
                 {
                     View child = mItemView.GetChildAt(i);
@@ -616,9 +616,9 @@ namespace Tizen.NUI.Samples
             mInsertButton.Size = new Size(50, 50);
             mInsertButton.LeaveRequired = true;
             mInsertButton.Hide();
-            mInsertButton.ClickEvent += (obj, e) =>
+            mInsertButton.Clicked += (obj, e) =>
             {
-                ItemContainer insertList = new ItemContainer();
+                ItemCollection insertList = new ItemCollection();
                 Random random = new Random();
                 for (uint i = 0; i < mItemView.GetChildCount(); ++i)
                 {
@@ -659,9 +659,9 @@ namespace Tizen.NUI.Samples
             mReplaceButton.Size = new Size(50, 50);
             mReplaceButton.LeaveRequired = true;
             mReplaceButton.Hide();
-            mReplaceButton.ClickEvent += (obj, e) =>
+            mReplaceButton.Clicked += (obj, e) =>
             {
-                ItemContainer replaceList = new ItemContainer();
+                ItemCollection replaceList = new ItemCollection();
                 Random random = new Random();
                 for (uint i = 0; i < mItemView.GetChildCount(); ++i)
                 {

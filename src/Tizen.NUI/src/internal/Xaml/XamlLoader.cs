@@ -1,3 +1,19 @@
+/*
+ * Copyright(c) 2021 Samsung Electronics Co., Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
 //
 // XamlLoader.cs
 //
@@ -30,6 +46,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -41,14 +58,15 @@ namespace Tizen.NUI.Xaml.Internals
 {
     /// This will be public opened in tizen_6.0 after ACR done. Before ACR, need to be hidden as inhouse API.
     [EditorBrowsable(EditorBrowsableState.Never)]
-    [Obsolete ("Replaced by ResourceLoader")]
+    [Obsolete("Replaced by ResourceLoader")]
     public static class XamlLoader
     {
         static Func<Type, string> xamlFileProvider;
 
         /// This will be public opened in tizen_6.0 after ACR done. Before ACR, need to be hidden as inhouse API.
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public static Func<Type, string> XamlFileProvider {
+        public static Func<Type, string> XamlFileProvider
+        {
             get { return xamlFileProvider; }
             internal set
             {
@@ -131,6 +149,14 @@ namespace Tizen.NUI.Xaml
             using (var textReader = new StringReader(xaml))
             using (var reader = XmlReader.Create(textReader))
             {
+                Load(view, reader);
+            }
+        }
+
+        public static void Load(object view, XmlReader reader)
+        {
+            if (reader != null)
+            {
                 while (reader.Read())
                 {
                     //Skip until element
@@ -170,6 +196,16 @@ namespace Tizen.NUI.Xaml
             using (var textreader = new StringReader(xaml))
             using (var reader = XmlReader.Create(textreader))
             {
+                inflatedView = Create(reader, doNotThrow);
+            }
+            return inflatedView;
+        }
+
+        public static object Create(XmlReader reader, bool doNotThrow = false)
+        {
+            object inflatedView = null;
+            if (reader != null)
+            {
                 while (reader.Read())
                 {
                     //Skip until element
@@ -190,6 +226,36 @@ namespace Tizen.NUI.Xaml
                         ExceptionHandler = doNotThrow ? e => { } : (Action<Exception>)null,
                     };
                     var cvv = new CreateValuesVisitor(visitorContext);
+
+                    // Visit Parameter Properties to create instance from parameterized constructor
+                    var type = XamlParser.GetElementType(rootnode.XmlType, rootnode, null, out XamlParseException xpe);
+                    if (xpe != null)
+                        throw xpe;
+
+                    var ctorInfo =
+                        type.GetTypeInfo()
+                            .DeclaredConstructors.FirstOrDefault(
+                                ci =>
+                                    ci.GetParameters().Length != 0 && ci.IsPublic &&
+                                    ci.GetParameters().All(pi => pi.CustomAttributes.Any(attr => attr.AttributeType == typeof(ParameterAttribute))));
+                    if (ctorInfo != null)
+                    {
+                        foreach (var parameter in ctorInfo.GetParameters())
+                        {
+                            var propname =
+                                parameter.CustomAttributes.First(ca => ca.AttributeType.FullName == "Tizen.NUI.Binding.ParameterAttribute")?
+                                    .ConstructorArguments.First()
+                                    .Value as string;
+
+                            var name = new XmlName("", propname);
+                            if (rootnode.Properties.TryGetValue(name, out INode node) && node is ValueNode)
+                            {
+                                node.Accept(cvv, rootnode);
+                            }
+                        }
+                    }
+
+
                     cvv.Visit((ElementNode)rootnode, null);
                     inflatedView = rootnode.Root = visitorContext.Values[rootnode];
                     visitorContext.RootElement = inflatedView as BindableObject;
@@ -272,39 +338,29 @@ namespace Tizen.NUI.Xaml
             {
                 Assembly assembly = type.Assembly;
 
-                Stream stream = null;
-
-                foreach (string str in assembly.GetManifestResourceNames())
-                {
-                    string resourceClassName = str.Substring(0, str.LastIndexOf('.'));
-                    int index = resourceClassName.LastIndexOf('.');
-                    if (0 <= index && index < resourceClassName.Length)
-                    {
-                        resourceClassName = resourceClassName.Substring(index + 1);
-
-                        if (resourceClassName == type.Name)
-                        {
-                            stream = assembly.GetManifestResourceStream(str);
-                            break;
-                        }
-                    }
-                }
-
-                if (null == stream)
+                var resourceId = XamlResourceIdAttribute.GetResourceIdForType(type);
+                if (null == resourceId)
                 {
                     throw new XamlParseException(string.Format("Can't find type {0} in embedded resource", type.FullName), new XmlLineInfo());
                 }
                 else
                 {
-                    Byte[] buffer = new byte[stream.Length];
-                    stream.Read(buffer, 0, (int)stream.Length);
+                    Stream stream = assembly.GetManifestResourceStream(resourceId);
 
-                    string ret = System.Text.Encoding.Default.GetString(buffer);
-                    return ret;
+                    if (null != stream)
+                    {
+                        Byte[] buffer = new byte[stream.Length];
+                        stream.Read(buffer, 0, (int)stream.Length);
+
+                        string ret = System.Text.Encoding.Default.GetString(buffer);
+                        return ret;
+                    }
+                    else
+                    {
+                        throw new XamlParseException(string.Format("Can't get xaml stream {0} in embedded resource", type.FullName), new XmlLineInfo());
+                    }
                 }
             }
-
-            return null;
         }
 
         //if the assembly was generated using a version of XamlG that doesn't outputs XamlResourceIdAttributes, we still need to find the resource, and load it

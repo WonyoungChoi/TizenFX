@@ -65,11 +65,7 @@ namespace Tizen.NUI.Samples
                     },
                     BackgroundImageBorder = new Selector<Rectangle> { All = new Rectangle(5, 5, 5, 5) },
 
-                    ImageShadow = new ImageShadow
-                    {
-                        Url = CommonResource.GetFHResourcePath() + "3. Button/rectangle_btn_shadow.png",
-                        Border = new Rectangle(5, 5, 5, 5)
-                    },
+                    ImageShadow = new ImageShadow(CommonResource.GetFHResourcePath() + "3. Button/rectangle_btn_shadow.png", new Rectangle(5, 5, 5, 5)),
 
                     Overlay = new ImageViewStyle
                     {
@@ -149,13 +145,13 @@ namespace Tizen.NUI.Samples
             root.Add(box);
 
             box.image.SetValues();
-            box.but1.ClickEvent += But1_ClickEvent;
+            box.but1.Clicked += But1_Clicked;
             box.but1.Style.Text.Text = new Selector<string>
             {
                 Normal = "Pause !",
                 Selected = "Play !"
             };
-            box.but2.ClickEvent += But2_ClickEvent;
+            box.but2.Clicked += But2_Clicked;
             box.but2.Style.Text.Text = new Selector<string>
             {
                 Normal = "Stop !",
@@ -167,15 +163,13 @@ namespace Tizen.NUI.Samples
             box2 = new Box(new Size2D(root.Size2D.Width, GetRatio(40, root.Size2D.Height)), "Image array Test", "");
             root.Add(box2);
 
-            var list = new List<string>();
             for (int i = 1; i <= 8; i++)
             {
-                list.Add(resPath + "images/AGIF/dog-anim-00" + i + ".png");
+                box2.image.URLs.Add(resPath + "images/AGIF/dog-anim-00" + i + ".png");
             }
-            box2.image.URLs = list;
             box2.image.Play();
 
-            box2.but1.ClickEvent += But1_ClickEvent1;
+            box2.but1.Clicked += But1_Clicked1;
             box2.but1.Style.Text.Text = new Selector<string>
             {
                 Normal = "Pause !",
@@ -189,7 +183,7 @@ namespace Tizen.NUI.Samples
             box2.but1.Style.Text.MultiLine = true;
 
 
-            box2.but2.ClickEvent += But2_ClickEvent1;
+            box2.but2.Clicked += But2_Clicked1;
             box2.but2.IsSelectable = false;
             box2.but2.Style.Text.Text = new Selector<string>
             {
@@ -197,7 +191,7 @@ namespace Tizen.NUI.Samples
                 Pressed = "Up 100ms",
             };
 
-            box2.but3.ClickEvent += But3_ClickEvent;
+            box2.but3.Clicked += But3_Clicked;
             box2.but3.IsSelectable = false;
             box2.but3.Style.Text.Text = new Selector<string>
             {
@@ -208,9 +202,9 @@ namespace Tizen.NUI.Samples
 
         }
 
-        private void But3_ClickEvent(object sender, Button.ClickEventArgs e)
+        private void But3_Clicked(object sender, ClickedEventArgs e)
         {
-            tlog.Fatal(tag, $"But3_ClickEvent()!");
+            tlog.Fatal(tag, $"But3_Clicked()!");
             var src = sender as Button;
             if (src != null)
             {
@@ -220,9 +214,9 @@ namespace Tizen.NUI.Samples
             }
         }
 
-        private void But2_ClickEvent1(object sender, Button.ClickEventArgs e)
+        private void But2_Clicked1(object sender, ClickedEventArgs e)
         {
-            tlog.Fatal(tag, $"But2_ClickEvent1()!");
+            tlog.Fatal(tag, $"But2_Clicked1()!");
             var src = sender as Button;
             if (src != null)
             {
@@ -231,9 +225,9 @@ namespace Tizen.NUI.Samples
                 box2.status.Text = $"playing now,  frame delay: {box2.image.FrameDelay}ms,  loop count: {box2.image.LoopCount}";
             }
         }
-        private void But1_ClickEvent1(object sender, Button.ClickEventArgs e)
+        private void But1_Clicked1(object sender, ClickedEventArgs e)
         {
-            tlog.Fatal(tag, $"But1_ClickEvent1()!");
+            tlog.Fatal(tag, $"But1_Clicked1()!");
             var src = sender as Button;
             if (src != null)
             {
@@ -253,9 +247,9 @@ namespace Tizen.NUI.Samples
             }
         }
 
-        private void But2_ClickEvent(object sender, Button.ClickEventArgs e)
+        private void But2_Clicked(object sender, ClickedEventArgs e)
         {
-            tlog.Fatal(tag, $"But2_ClickEvent()!");
+            tlog.Fatal(tag, $"But2_Clicked()!");
             var src = sender as Button;
             if (src != null)
             {
@@ -272,9 +266,9 @@ namespace Tizen.NUI.Samples
             }
         }
 
-        private void But1_ClickEvent(object sender, Button.ClickEventArgs e)
+        private void But1_Clicked(object sender, ClickedEventArgs e)
         {
-            tlog.Fatal(tag, $"But1_ClickEvent()!");
+            tlog.Fatal(tag, $"But1_Clicked()!");
             var src = sender as Button;
             if (src != null)
             {

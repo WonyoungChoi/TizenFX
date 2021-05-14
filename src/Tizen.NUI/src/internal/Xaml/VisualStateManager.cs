@@ -1,4 +1,20 @@
-﻿using System;
+﻿/*
+ * Copyright(c) 2021 Samsung Electronics Co., Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -18,8 +34,8 @@ namespace Tizen.NUI.Xaml
         }
 
         public static readonly BindableProperty VisualStateGroupsProperty =
-            BindableProperty.CreateAttached("VisualStateGroups", typeof(VisualStateGroupList), typeof(/*VisualElement*/BaseHandle), 
-                defaultValue: null, propertyChanged: VisualStateGroupsPropertyChanged, 
+            BindableProperty.CreateAttached("VisualStateGroups", typeof(VisualStateGroupList), typeof(/*VisualElement*/BaseHandle),
+                defaultValue: null, propertyChanged: VisualStateGroupsPropertyChanged,
                 defaultValueCreator: bindable => new VisualStateGroupList());
 
         static void VisualStateGroupsPropertyChanged(BindableObject bindable, object oldValue, object newValue)
@@ -96,7 +112,7 @@ namespace Tizen.NUI.Xaml
         readonly IList<VisualStateGroup> _internalList;
 
         void Validate(IList<VisualStateGroup> groups)
-        { 
+        {
             // If we have 1 group, no need to worry about duplicate group names
             if (groups.Count > 1)
             {
@@ -117,7 +133,7 @@ namespace Tizen.NUI.Xaml
             }
         }
 
-        public VisualStateGroupList() 
+        public VisualStateGroupList()
         {
             _internalList = new WatchAddList<VisualStateGroup>(Validate);
         }
@@ -199,7 +215,7 @@ namespace Tizen.NUI.Xaml
 
     [RuntimeNameProperty(nameof(Name))]
     [ContentProperty(nameof(States))]
-    internal sealed class VisualStateGroup 
+    internal sealed class VisualStateGroup
     {
         public VisualStateGroup()
         {
@@ -226,7 +242,7 @@ namespace Tizen.NUI.Xaml
 
         internal VisualStateGroup Clone()
         {
-            var clone =  new VisualStateGroup {TargetType = TargetType, Name = Name, CurrentState = CurrentState};
+            var clone = new VisualStateGroup { TargetType = TargetType, Name = Name, CurrentState = CurrentState };
             foreach (VisualState state in States)
             {
                 clone.States.Add(state.Clone());
@@ -249,7 +265,7 @@ namespace Tizen.NUI.Xaml
     }
 
     [RuntimeNameProperty(nameof(Name))]
-    internal sealed class VisualState 
+    internal sealed class VisualState
     {
         public VisualState()
         {
@@ -257,7 +273,7 @@ namespace Tizen.NUI.Xaml
         }
 
         public string Name { get; set; }
-        public IList<Setter> Setters { get;}
+        public IList<Setter> Setters { get; }
         public Type TargetType { get; set; }
 
         internal VisualState Clone()

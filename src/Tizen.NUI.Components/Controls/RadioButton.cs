@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright(c) 2019 Samsung Electronics Co., Ltd.
+ * Copyright(c) 2021 Samsung Electronics Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  *
  */
 using System.ComponentModel;
+using Tizen.NUI.BaseComponents;
 
 namespace Tizen.NUI.Components
 {
@@ -31,6 +32,8 @@ namespace Tizen.NUI.Components
     /// <since_tizen> 8 </since_tizen>
     public class RadioButton : SelectButton
     {
+        private bool selectedAgain = false;
+
         static RadioButton() { }
 
         /// <summary>
@@ -52,12 +55,22 @@ namespace Tizen.NUI.Components
         public RadioButton(ButtonStyle buttonStyle) : base(buttonStyle) { }
 
         /// <summary>
+        /// Initialize AT-SPI object.
+        /// </summary>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public override void OnInitialize()
+        {
+            base.OnInitialize();
+            SetAccessibilityConstructor(Role.RadioButton);
+        }
+
+        /// <summary>
         /// Get RadioButtonGroup to which this selections belong.
         /// </summary>
         /// <since_tizen> 6 </since_tizen>
         /// This will be public opened in tizen_5.5 after ACR done. Before ACR, need to be hidden as inhouse API.
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public RadioButtonGroup ItemGroup
+        public new RadioButtonGroup ItemGroup
         {
             get
             {
@@ -69,16 +82,84 @@ namespace Tizen.NUI.Components
             }
         }
 
-        /// <summary>
-        /// Set CheckState to true after selecting RadioButton.
-        /// </summary>
-        /// This will be public opened in tizen_5.5 after ACR done. Before ACR, need to be hidden as inhouse API.
+        /// <inheritdoc/>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        protected override void OnSelectedChanged()
+        public override bool OnKey(Key key)
         {
-            if (!IsSelected)
+            if ((IsEnabled == false) || (key == null))
+            {
+                return false;
+            }
+
+            if (key.State == Key.StateType.Up)
+            {
+                if (key.KeyPressedName == "Return")
+                {
+                    if (IsSelected == true)
+                    {
+                        selectedAgain = true;
+                    }
+                }
+            }
+
+            bool ret = base.OnKey(key);
+
+            if (selectedAgain == true)
             {
                 IsSelected = true;
+                selectedAgain = false;
+            }
+
+            return ret;
+        }
+
+        /// <inheritdoc/>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        protected override bool HandleControlStateOnTouch(Touch touch)
+        {
+            if ((IsEnabled == false) || (touch == null))
+            {
+                return false;
+            }
+
+            PointStateType state = touch.GetState(0);
+            switch (state)
+            {
+                case PointStateType.Up:
+                    if (IsSelected == true)
+                    {
+                        selectedAgain = true;
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            bool ret = base.HandleControlStateOnTouch(touch);
+
+            if (selectedAgain == true)
+            {
+                IsSelected = true;
+                selectedAgain = false;
+            }
+
+            return ret;
+        }
+
+        /// <inheritdoc/>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        protected override void OnControlStateChanged(ControlStateChangedEventArgs info)
+        {
+            if (info.PreviousState.Contains(ControlState.Selected) != info.CurrentState.Contains(ControlState.Selected))
+            {
+                // RadioButton does not invoke SelectedChanged if button or key
+                // is unpressed while its state is selected.
+                if (selectedAgain == true)
+                {
+                    return;
+                }
+
+                base.OnControlStateChanged(info);
             }
         }
     }

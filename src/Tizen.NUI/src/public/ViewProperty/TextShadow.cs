@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright(c) 2020 Samsung Electronics Co., Ltd.
+ * Copyright(c) 2021 Samsung Electronics Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  *
  */
 
+using System;
 using System.ComponentModel;
 
 namespace Tizen.NUI
@@ -23,12 +24,12 @@ namespace Tizen.NUI
     /// The Text Shadow for TextLabel.
     /// </summary>
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public class TextShadow : Internal.ICloneable
+    public class TextShadow : ICloneable, IDisposable
     {
-        private PropertyMap propertyMap = null;
+        private bool disposed = false;
+        private readonly PropertyMap propertyMap = null;
 
         internal delegate void PropertyChangedCallback(TextShadow instance);
-        internal PropertyChangedCallback OnPropertyChanged = null;
 
         /// <summary>
         /// Constructor
@@ -54,7 +55,7 @@ namespace Tizen.NUI
         [EditorBrowsable(EditorBrowsableState.Never)]
         public object Clone()
         {
-            return new TextShadow(Color, Offset, BlurRadius);
+            return new TextShadow((Color)Color?.Clone(), Offset, BlurRadius);
         }
 
         /// <summary>
@@ -85,7 +86,12 @@ namespace Tizen.NUI
         [EditorBrowsable(EditorBrowsableState.Never)]
         public float BlurRadius { get; } = 0.0f;
 
-        internal TextShadow(TextShadow other, PropertyChangedCallback callback = null)
+        internal TextShadow(PropertyMap propertyMap)
+        {
+            this.propertyMap = new PropertyMap(propertyMap);
+        }
+
+        internal TextShadow(TextShadow other)
         {
             propertyMap = new PropertyMap();
 
@@ -97,8 +103,6 @@ namespace Tizen.NUI
 
             BlurRadius = other.BlurRadius;
             propertyMap["blurRadius"] = new PropertyValue(BlurRadius);
-
-            OnPropertyChanged = callback;
         }
 
         static internal PropertyValue ToPropertyValue(TextShadow instance)
@@ -109,6 +113,29 @@ namespace Tizen.NUI
             }
 
             return new PropertyValue(instance.propertyMap);
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed)
+            {
+                return;
+            }
+            if (disposing)
+            {
+                propertyMap?.Dispose();
+                Color?.Dispose();
+                Offset?.Dispose();
+            }
+            disposed = true;
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public void Dispose()
+        {
+            Dispose(true);
+            global::System.GC.SuppressFinalize(this);
         }
     }
 }

@@ -1,3 +1,20 @@
+/*
+ * Copyright(c) 2021 Samsung Electronics Co., Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -40,9 +57,11 @@ namespace Tizen.NUI.Xaml
             var value = Values[node];
             XmlName propertyName;
             //Set RD to VE
-            if (typeof(ResourceDictionary).IsAssignableFrom(Context.Types[node]) && ApplyPropertiesVisitor.TryGetPropertyName(node, parentNode, out propertyName)) {
+            if (typeof(ResourceDictionary).IsAssignableFrom(Context.Types[node]) && ApplyPropertiesVisitor.TryGetPropertyName(node, parentNode, out propertyName))
+            {
                 if ((propertyName.LocalName == "Resources" ||
-                     propertyName.LocalName.EndsWith(".Resources", StringComparison.Ordinal)) && value is ResourceDictionary) {
+                     propertyName.LocalName.EndsWith(".Resources", StringComparison.Ordinal)) && value is ResourceDictionary)
+                {
                     var source = Values[parentNode];
                     ApplyPropertiesVisitor.SetPropertyValue(source, propertyName, value, Context.RootElement, node, Context, node);
                     return;
@@ -50,11 +69,11 @@ namespace Tizen.NUI.Xaml
             }
 
             //Only proceed further if the node is a keyless RD
-            if (   parentNode is IElementNode
+            if (parentNode is IElementNode
                 && typeof(ResourceDictionary).IsAssignableFrom(Context.Types[((IElementNode)parentNode)])
                 && !((IElementNode)parentNode).Properties.ContainsKey(XmlName.xKey))
                 node.Accept(new ApplyPropertiesVisitor(Context, stopOnResourceDictionary: false), parentNode);
-            else if (   parentNode is ListNode
+            else if (parentNode is ListNode
                      && typeof(ResourceDictionary).IsAssignableFrom(Context.Types[((IElementNode)parentNode.Parent)])
                      && !((IElementNode)parentNode.Parent).Properties.ContainsKey(XmlName.xKey))
                 node.Accept(new ApplyPropertiesVisitor(Context, stopOnResourceDictionary: false), parentNode);
@@ -73,11 +92,11 @@ namespace Tizen.NUI.Xaml
             var enode = node as ElementNode;
             if (enode is null)
                 return false;
-            if (   parentNode is IElementNode
+            if (parentNode is IElementNode
                 && typeof(ResourceDictionary).IsAssignableFrom(Context.Types[((IElementNode)parentNode)])
                 && !((IElementNode)parentNode).Properties.ContainsKey(XmlName.xKey))
                 return true;
-            if (   parentNode is ListNode
+            if (parentNode is ListNode
                 && typeof(ResourceDictionary).IsAssignableFrom(Context.Types[((IElementNode)parentNode.Parent)])
                 && !((IElementNode)parentNode.Parent).Properties.ContainsKey(XmlName.xKey))
                 return true;

@@ -36,6 +36,8 @@ namespace Tizen.NUI.Components
         private Animation underlineAni = null;
         private bool isNeedAnimation = false;
         private Extents space;
+        private TabStyle tabStyle => ViewStyle as TabStyle;
+
         static Tab() { }
 
         /// <summary>
@@ -76,11 +78,17 @@ namespace Tizen.NUI.Components
         public event EventHandler<ItemChangedEventArgs> ItemChangedEvent;
 
         /// <summary>
-        /// Get style of tab.
+        /// Return currently applied style.
         /// </summary>
+        /// <remarks>
+        /// Modifying contents in style may cause unexpected behaviour.
+        /// </remarks>
         /// <since_tizen> 8 </since_tizen>
-        public new TabStyle Style => ViewStyle as TabStyle;
+        public TabStyle Style => (TabStyle)(ViewStyle as TabStyle)?.Clone();
 
+        /// <summary>
+        /// Get underline of Tab.
+        /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
         public View Underline
         {
@@ -134,13 +142,13 @@ namespace Tizen.NUI.Components
         {
             get
             {
-                return Style?.UseTextNaturalSize ?? false;
+                return tabStyle?.UseTextNaturalSize ?? false;
             }
             set
             {
-                if (null != Style)
+                if (null != tabStyle)
                 {
-                    Style.UseTextNaturalSize = value;
+                    tabStyle.UseTextNaturalSize = value;
                     RelayoutRequest();
                 }
             }
@@ -155,13 +163,13 @@ namespace Tizen.NUI.Components
         {
             get
             {
-                return Style?.ItemSpace ?? 0;
+                return tabStyle?.ItemSpace ?? 0;
             }
             set
             {
-                if (null != Style)
+                if (null != tabStyle)
                 {
-                    Style.ItemSpace = value;
+                    tabStyle.ItemSpace = value;
                     RelayoutRequest();
                 }
             }
@@ -198,18 +206,18 @@ namespace Tizen.NUI.Components
             }
             set
             {
-                if(null != value && null != Style?.ItemPadding)
+                if (null != value && null != tabStyle?.ItemPadding)
                 {
-                    Style.ItemPadding.CopyFrom(value);
+                    tabStyle.ItemPadding.CopyFrom(value);
 
                     if (null == space)
                     {
                         space = new Extents((ushort start, ushort end, ushort top, ushort bottom) =>
                         {
-                            Style.ItemPadding.Start = start;
-                            Style.ItemPadding.End = end;
-                            Style.ItemPadding.Top = top;
-                            Style.ItemPadding.Bottom = bottom;
+                            tabStyle.ItemPadding.Start = start;
+                            tabStyle.ItemPadding.End = end;
+                            tabStyle.ItemPadding.Top = top;
+                            tabStyle.ItemPadding.Bottom = bottom;
                             RelayoutRequest();
                         }, value.Start, value.End, value.Top, value.Bottom);
                     }
@@ -232,14 +240,15 @@ namespace Tizen.NUI.Components
         {
             get
             {
-                return Style?.UnderLine?.Size;
+                return Underline.Size;
             }
             set
             {
-                if (null != Style?.UnderLine)
+                if (null != tabStyle?.UnderLine)
                 {
-                    Style.UnderLine.Size = value;
+                    tabStyle.UnderLine.Size = value;
                 }
+                Underline.Size = value;
             }
         }
 
@@ -252,14 +261,15 @@ namespace Tizen.NUI.Components
         {
             get
             {
-                return Style?.UnderLine?.BackgroundColor?.All;
+                return Underline.BackgroundColor;
             }
             set
             {
-                if (null != Style?.UnderLine)
+                if (null != tabStyle?.BackgroundColor)
                 {
-                    Style.UnderLine.BackgroundColor = value;
+                    tabStyle.UnderLine.BackgroundColor = value;
                 }
+                Underline.BackgroundColor = value;
             }
         }
 
@@ -272,13 +282,14 @@ namespace Tizen.NUI.Components
         {
             get
             {
-                return Style?.Text?.PointSize?.All ?? 0;
+                return tabStyle?.Text?.PointSize?.All ?? 0;
             }
             set
             {
-                if (null != Style?.Text)
+                if (null != tabStyle?.Text)
                 {
-                    Style.Text.PointSize = value;
+                    tabStyle.Text.PointSize = value;
+                    RelayoutRequest();
                 }
             }
         }
@@ -292,13 +303,14 @@ namespace Tizen.NUI.Components
         {
             get
             {
-                return Style?.Text?.FontFamily?.All;
+                return tabStyle?.Text?.FontFamily?.All;
             }
             set
             {
-                if (null != Style?.Text)
+                if (null != tabStyle?.Text)
                 {
-                    Style.Text.FontFamily = value;
+                    tabStyle.Text.FontFamily = value;
+                    RelayoutRequest();
                 }
             }
         }
@@ -312,13 +324,14 @@ namespace Tizen.NUI.Components
         {
             get
             {
-                return Style?.Text?.TextColor?.All;
+                return tabStyle?.Text?.TextColor?.All;
             }
             set
             {
-                if (null != Style?.Text)
+                if (null != tabStyle?.Text)
                 {
-                    Style.Text.TextColor = value;
+                    tabStyle.Text.TextColor = value;
+                    RelayoutRequest();
                 }
             }
         }
@@ -380,7 +393,7 @@ namespace Tizen.NUI.Components
         [Obsolete("Deprecated in API8; Will be removed in API10")]
         public void DeleteItem(int itemIndex)
         {
-            if(itemList == null || itemIndex < 0 || itemIndex >= itemList.Count)
+            if (itemList == null || itemIndex < 0 || itemIndex >= itemList.Count)
             {
                 return;
             }
@@ -421,7 +434,9 @@ namespace Tizen.NUI.Components
         /// <param name="type">Dispose type.</param>
         /// <since_tizen> 6 </since_tizen>
         [Obsolete("Deprecated in API8; Will be removed in API10")]
+#pragma warning disable CS0809 // Obsolete member overrides non-obsolete member, It will be removed in API10
         protected override void Dispose(DisposeTypes type)
+#pragma warning restore CS0809 // Obsolete member overrides non-obsolete member, It will be removed in API10
         {
             if (disposed)
             {
@@ -430,9 +445,9 @@ namespace Tizen.NUI.Components
 
             if (type == DisposeTypes.Explicit)
             {
-                if(underlineAni != null)
+                if (underlineAni != null)
                 {
-                    if(underlineAni.State == Animation.States.Playing)
+                    if (underlineAni.State == Animation.States.Playing)
                     {
                         underlineAni.Stop();
                     }
@@ -440,9 +455,9 @@ namespace Tizen.NUI.Components
                     underlineAni = null;
                 }
                 Utility.Dispose(underline);
-                if(itemList != null)
+                if (itemList != null)
                 {
-                    for(int i = 0; i < itemList.Count; i++)
+                    for (int i = 0; i < itemList.Count; i++)
                     {
                         Remove(itemList[i]);
                         itemList[i].Dispose();
@@ -478,21 +493,6 @@ namespace Tizen.NUI.Components
         }
 
         /// <summary>
-        /// Theme change callback when theme is changed, this callback will be trigger.
-        /// </summary>
-        /// <param name="sender">The sender</param>
-        /// <param name="e">The event data</param>
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        protected override void OnThemeChangedEvent(object sender, StyleManager.ThemeChangeEventArgs e)
-        {
-            TabStyle tabStyle = StyleManager.Instance.GetViewStyle(StyleName) as TabStyle;
-            if (tabStyle != null)
-            {
-                Style.CopyFrom(tabStyle);
-            }
-        }
-
-        /// <summary>
         /// Layout child in Tab and it can be override by user.
         /// </summary>
         /// <since_tizen> 6 </since_tizen>
@@ -511,30 +511,30 @@ namespace Tizen.NUI.Components
                 return;
             }
 
-            int preX = (int)Style.ItemPadding.Start;
+            int preX = (int)tabStyle?.ItemPadding.Start;
             int preW = 0;
-            int itemSpace = Style.ItemSpace;
+            int itemSpace = (null != tabStyle) ? tabStyle.ItemSpace : 0;
 
             if (LayoutDirection == ViewLayoutDirectionType.LTR)
             {
-                if (Style.UseTextNaturalSize == true)
+                if (tabStyle?.UseTextNaturalSize == true)
                 {
                     for (int i = 0; i < totalNum; i++)
                     {
                         preW = (itemList[i].TextItem.NaturalSize2D != null ? itemList[i].TextItem.NaturalSize2D.Width : 0);
-                        itemList[i].Position2D.X = preX;
-                        itemList[i].Size2D.Width = preW;
+                        itemList[i].PositionX = preX;
+                        itemList[i].SizeWidth = preW;
                         preX = itemList[i].Position2D.X + preW + itemSpace;
                         itemList[i].Index = i;
                     }
                 }
                 else
                 {
-                    preW = (Size2D.Width - (int)Style.ItemPadding.Start - (int)Style.ItemPadding.End) / totalNum;
+                    preW = (Size2D.Width - (int)tabStyle?.ItemPadding.Start - (int)tabStyle?.ItemPadding.End) / totalNum;
                     for (int i = 0; i < totalNum; i++)
                     {
-                        itemList[i].Position2D.X = preX;
-                        itemList[i].Size2D.Width = preW;
+                        itemList[i].PositionX = preX;
+                        itemList[i].SizeWidth = preW;
                         preX = itemList[i].Position2D.X + preW + itemSpace;
                         itemList[i].Index = i;
                     }
@@ -542,26 +542,26 @@ namespace Tizen.NUI.Components
             }
             else
             {
-                preX = (int)Style.ItemPadding.End;
-                if (Style.UseTextNaturalSize == true)
+                preX = (int)tabStyle?.ItemPadding.End;
+                if (tabStyle?.UseTextNaturalSize == true)
                 {
                     int w = Size2D.Width;
                     for (int i = 0; i < totalNum; i++)
                     {
                         preW = (itemList[i].NaturalSize2D != null ? itemList[i].NaturalSize2D.Width : 0);
-                        itemList[i].Position2D.X = w - preW - preX;
-                        itemList[i].Size2D.Width = preW;
+                        itemList[i].PositionX = w - preW - preX;
+                        itemList[i].SizeWidth = preW;
                         preX = w - itemList[i].Position2D.X + itemSpace;
                         itemList[i].Index = i;
                     }
                 }
                 else
                 {
-                    preW = (Size2D.Width - (int)Style.ItemPadding.Start - (int)Style.ItemPadding.End) / totalNum;
+                    preW = (Size2D.Width - (int)tabStyle?.ItemPadding.Start - (int)tabStyle?.ItemPadding.End) / totalNum;
                     for (int i = totalNum - 1; i >= 0; i--)
                     {
-                        itemList[i].Position2D.X = preX;
-                        itemList[i].Size2D.Width = preW;
+                        itemList[i].PositionX = preX;
+                        itemList[i].SizeWidth = preW;
                         preX = itemList[i].Position2D.X + preW + itemSpace;
                         itemList[i].Index = i;
                     }
@@ -582,20 +582,20 @@ namespace Tizen.NUI.Components
 
         private void AddItemByIndex(TabItemData itemData, int index)
         {
-            if (null == itemData) return;
+            if (null == itemData || null == tabStyle) return;
             int h = 0;
-            int topSpace = (int)Style.ItemPadding.Top;
-            if (Style.UnderLine != null && Style.UnderLine.Size != null)
+            int topSpace = (int)tabStyle.ItemPadding.Top;
+            if (Underline.Size != null)
             {
-                h = (int)Style.UnderLine.Size.Height;
+                h = (int)Underline.Size.Height;
             }
 
             Tab.TabItem item = new TabItem();
-            item.TextItem.ApplyStyle(Style.Text);
+            item.TextItem.ApplyStyle(tabStyle.Text);
 
             item.Text = itemData.Text;
-            item.Size2D.Height = Size2D.Height - h - topSpace;
-            item.Position2D.Y = topSpace;
+            item.SizeHeight = SizeHeight - h - topSpace;
+            item.PositionY = topSpace;
             item.TouchEvent += ItemTouchEvent;
             Add(item);
 
@@ -635,19 +635,18 @@ namespace Tizen.NUI.Components
                 underlineAni = new Animation(aniTime);
             }
         }
-        
+
         private void UpdateUnderLinePos()
         {
-            if (underline == null || Style.UnderLine == null || Style.UnderLine.Size == null
-                || itemList == null || itemList.Count <= 0)
+            if (underline == null || Underline.Size == null || itemList == null || itemList.Count <= 0)
             {
                 return;
             }
 
-            Style.UnderLine.Size.Width = itemList[curIndex].Size2D.Width;
+            Underline.SizeWidth = itemList[curIndex].Size2D.Width;
 
-            underline.Size2D = new Size2D(itemList[curIndex].Size2D.Width, (int)Style.UnderLine.Size.Height);
-            underline.BackgroundColor = Style.UnderLine.BackgroundColor.All;
+            underline.Size2D = new Size2D(itemList[curIndex].Size2D.Width, (int)Underline.Size.Height);
+            underline.BackgroundColor = tabStyle.UnderLine.BackgroundColor.All;
             if (isNeedAnimation)
             {
                 CreateUnderLineAnimation();
@@ -661,7 +660,7 @@ namespace Tizen.NUI.Components
             }
             else
             {
-                underline.Position2D.X = itemList[curIndex].Position2D.X;
+                underline.PositionX = itemList[curIndex].PositionX;
                 isNeedAnimation = true;
             }
 
@@ -670,7 +669,7 @@ namespace Tizen.NUI.Components
 
         private void UpdateSelectedItem(TabItem item)
         {
-            if(item == null || curIndex == item.Index)
+            if (item == null || curIndex == item.Index)
             {
                 return;
             }
@@ -692,7 +691,7 @@ namespace Tizen.NUI.Components
         private bool ItemTouchEvent(object source, TouchEventArgs e)
         {
             TabItem item = source as TabItem;
-            if(item == null)
+            if (item == null)
             {
                 return false;
             }
@@ -769,6 +768,7 @@ namespace Tizen.NUI.Components
         /// </summary>
         /// <since_tizen> 6 </since_tizen>
         [Obsolete("Deprecated in API8; Will be removed in API10")]
+        [global::System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
         public class TabItemData
         {
             /// <summary>
@@ -788,14 +788,19 @@ namespace Tizen.NUI.Components
         /// </summary>
         /// <since_tizen> 6 </since_tizen>
         [Obsolete("Deprecated in API8; Will be removed in API10")]
+        [global::System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
         public class ItemChangedEventArgs : EventArgs
         {
             /// <summary> Previous selected index of Tab </summary>
             /// <since_tizen> 6 </since_tizen>
+            /// It will be removed in API10
+            [global::System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:Do not declare visible instance fields")]
             [Obsolete("Deprecated in API8; Will be removed in API10")]
             public int PreviousIndex;
             /// <summary> Current selected index of Tab </summary>
             /// <since_tizen> 6 </since_tizen>
+            /// It will be removed in API10
+            [global::System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1051:Do not declare visible instance fields")]
             [Obsolete("Deprecated in API8; Will be removed in API10")]
             public int CurrentIndex;
         }

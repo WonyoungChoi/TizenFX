@@ -1,7 +1,26 @@
-﻿using System;
+﻿/*
+ * Copyright(c) 2021 Samsung Electronics Co., Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using Tizen.NUI.BaseComponents;
 using Tizen.NUI.Components.Extension;
+using Tizen.NUI.Accessibility; // To use AccessibilityManager
 
 namespace Tizen.NUI.Components
 {
@@ -10,19 +29,30 @@ namespace Tizen.NUI.Components
         private ImageView overlayImage;
         private TextLabel buttonText;
         private ImageView buttonIcon;
+        private Vector2 size;
 
-        private EventHandler<StateChangedEventArgs> stateChangeHander;
+        private EventHandler<StateChangedEventArgs> stateChangeHandler;
 
-        private bool isSelected = false;
-        private bool isEnabled = true;
         private bool isPressed = false;
+        private bool styleApplied = false;
 
-        private StringSelector textSelector = new StringSelector();
-        private StringSelector translatableTextSelector = new StringSelector();
-        private ColorSelector textColorSelector = new ColorSelector();
-        private FloatSelector pointSizeSelector = new FloatSelector();
+        /// <summary>
+        /// Get accessibility name.
+        /// </summary>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        protected override string AccessibilityGetName()
+        {
+            return Text;
+        }
 
-        private StringSelector iconURLSelector = new StringSelector();
+        /// <summary>
+        /// Prevents from showing child widgets in AT-SPI tree.
+        /// </summary>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        protected override bool AccessibilityShouldReportZeroChildren()
+        {
+            return true;
+        }
 
         /// <summary>
         /// The ButtonExtension instance that is injected by ButtonStyle.
@@ -37,7 +67,12 @@ namespace Tizen.NUI.Components
         [EditorBrowsable(EditorBrowsableState.Never)]
         protected virtual TextLabel CreateText()
         {
-            return new TextLabel();
+            return new TextLabel
+            {
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                AccessibilityHighlightable = false,
+            };
         }
 
         /// <summary>
@@ -47,7 +82,10 @@ namespace Tizen.NUI.Components
         [EditorBrowsable(EditorBrowsableState.Never)]
         protected virtual ImageView CreateIcon()
         {
-            return new ImageView();
+            return new ImageView
+            {
+                AccessibilityHighlightable = false
+            };
         }
 
         /// <summary>
@@ -57,7 +95,15 @@ namespace Tizen.NUI.Components
         [EditorBrowsable(EditorBrowsableState.Never)]
         protected virtual ImageView CreateOverlayImage()
         {
-            return new ImageView();
+            return new ImageView
+            {
+                PositionUsesPivotPoint = true,
+                ParentOrigin = NUI.ParentOrigin.Center,
+                PivotPoint = NUI.PivotPoint.Center,
+                WidthResizePolicy = ResizePolicyType.FillToParent,
+                HeightResizePolicy = ResizePolicyType.FillToParent,
+                AccessibilityHighlightable = false
+            };
         }
 
         /// <summary>
@@ -65,7 +111,7 @@ namespace Tizen.NUI.Components
         /// </summary>
         /// <param name="eventArgs">The click information.</param>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        protected virtual void OnClick(ClickEventArgs eventArgs)
+        protected virtual void OnClicked(ClickedEventArgs eventArgs)
         {
         }
 
@@ -84,20 +130,72 @@ namespace Tizen.NUI.Components
         protected override void OnUpdate()
         {
             base.OnUpdate();
-            UpdateUIContent();
-
             Extension?.OnRelayout(this);
+        }
+
+        /// <inheritdoc/>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        protected override bool HandleControlStateOnTouch(Touch touch)
+        {
+            if (!IsEnabled || null == touch)
+            {
+                return false;
+            }
+
+            PointStateType state = touch.GetState(0);
+
+            switch (state)
+            {
+                case PointStateType.Down:
+                    isPressed = true;
+                    Extension?.SetTouchInfo(touch);
+                    UpdateState();
+                    return true;
+                case PointStateType.Interrupted:
+                    isPressed = false;
+                    UpdateState();
+                    return true;
+                case PointStateType.Up:
+                    {
+                        bool clicked = isPressed && IsEnabled;
+
+                        isPressed = false;
+
+                        if (IsSelectable)
+                        {
+                            Extension?.SetTouchInfo(touch);
+                            IsSelected = !IsSelected;
+                        }
+                        else
+                        {
+                            Extension?.SetTouchInfo(touch);
+                            UpdateState();
+                        }
+
+                        if (clicked)
+                        {
+                            ClickedEventArgs eventArgs = new ClickedEventArgs();
+                            OnClickedInternal(eventArgs);
+                        }
+
+                        return true;
+                    }
+                default:
+                    break;
+            }
+            return base.HandleControlStateOnTouch(touch);
         }
 
         /// <summary>
         /// Update Button State.
         /// </summary>
-        /// <param name="touchInfo">The touch information in case the state has changed by touching.</param>
         /// <since_tizen> 6 </since_tizen>
         /// This will be public opened in tizen_5.5 after ACR done. Before ACR, need to be hidden as inhouse API.
         [EditorBrowsable(EditorBrowsableState.Never)]
         protected void UpdateState()
         {
+            if (!styleApplied) return;
+
             ControlState sourceState = ControlState;
             ControlState targetState;
 
@@ -123,174 +221,9 @@ namespace Tizen.NUI.Components
                     PreviousState = ControlStatesExtension.FromControlStateClass(sourceState),
                     CurrentState = ControlStatesExtension.FromControlStateClass(targetState)
                 };
-                stateChangeHander?.Invoke(this, e);
+                stateChangeHandler?.Invoke(this, e);
 
                 Extension?.OnControlStateChanged(this, new ControlStateChangedEventArgs(sourceState, targetState));
-            }
-        }
-
-        /// <summary>
-        /// Measure text, it can be override.
-        /// </summary>
-        /// <since_tizen> 6 </since_tizen>
-        /// This will be public opened in tizen_5.5 after ACR done. Before ACR, need to be hidden as inhouse API.
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        protected virtual void MeasureText()
-        {
-            if (Style.IconRelativeOrientation == null || Icon == null || TextLabel == null)
-            {
-                return;
-            }
-            TextLabel.WidthResizePolicy = ResizePolicyType.Fixed;
-            TextLabel.HeightResizePolicy = ResizePolicyType.Fixed;
-            int textPaddingStart = Style.TextPadding.Start;
-            int textPaddingEnd = Style.TextPadding.End;
-            int textPaddingTop = Style.TextPadding.Top;
-            int textPaddingBottom = Style.TextPadding.Bottom;
-
-            int iconPaddingStart = Style.IconPadding.Start;
-            int iconPaddingEnd = Style.IconPadding.End;
-            int iconPaddingTop = Style.IconPadding.Top;
-            int iconPaddingBottom = Style.IconPadding.Bottom;
-
-            if (IconRelativeOrientation == IconOrientation.Top || IconRelativeOrientation == IconOrientation.Bottom)
-            {
-                TextLabel.SizeWidth = SizeWidth - textPaddingStart - textPaddingEnd;
-                TextLabel.SizeHeight = SizeHeight - textPaddingTop - textPaddingBottom - iconPaddingTop - iconPaddingBottom - Icon.SizeHeight;
-            }
-            else
-            {
-                TextLabel.SizeWidth = SizeWidth - textPaddingStart - textPaddingEnd - iconPaddingStart - iconPaddingEnd - Icon.SizeWidth;
-                TextLabel.SizeHeight = SizeHeight - textPaddingTop - textPaddingBottom;
-            }
-        }
-
-        /// <summary>
-        /// Layout child, it can be override.
-        /// </summary>
-        /// <since_tizen> 6 </since_tizen>
-        /// This will be public opened in tizen_5.5 after ACR done. Before ACR, need to be hidden as inhouse API.
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        protected virtual void LayoutChild()
-        {
-            if (Style.IconRelativeOrientation == null || Icon == null || TextLabel == null)
-            {
-                return;
-            }
-
-            var buttonIcon = Icon;
-            var buttonText = TextLabel;
-
-            int textPaddingStart = Style.TextPadding.Start;
-            int textPaddingEnd = Style.TextPadding.End;
-            int textPaddingTop = Style.TextPadding.Top;
-            int textPaddingBottom = Style.TextPadding.Bottom;
-
-            int iconPaddingStart = Style.IconPadding.Start;
-            int iconPaddingEnd = Style.IconPadding.End;
-            int iconPaddingTop = Style.IconPadding.Top;
-            int iconPaddingBottom = Style.IconPadding.Bottom;
-
-            switch (IconRelativeOrientation)
-            {
-                case IconOrientation.Top:
-                    buttonIcon.PositionUsesPivotPoint = true;
-                    buttonIcon.ParentOrigin = NUI.ParentOrigin.TopCenter;
-                    buttonIcon.PivotPoint = NUI.PivotPoint.TopCenter;
-                    buttonIcon.Position2D = new Position2D(0, iconPaddingTop);
-
-                    buttonText.PositionUsesPivotPoint = true;
-                    buttonText.ParentOrigin = NUI.ParentOrigin.BottomCenter;
-                    buttonText.PivotPoint = NUI.PivotPoint.BottomCenter;
-                    buttonText.Position2D = new Position2D(0, -textPaddingBottom);
-                    break;
-                case IconOrientation.Bottom:
-                    buttonIcon.PositionUsesPivotPoint = true;
-                    buttonIcon.ParentOrigin = NUI.ParentOrigin.BottomCenter;
-                    buttonIcon.PivotPoint = NUI.PivotPoint.BottomCenter;
-                    buttonIcon.Position2D = new Position2D(0, -iconPaddingBottom);
-
-                    buttonText.PositionUsesPivotPoint = true;
-                    buttonText.ParentOrigin = NUI.ParentOrigin.TopCenter;
-                    buttonText.PivotPoint = NUI.PivotPoint.TopCenter;
-                    buttonText.Position2D = new Position2D(0, textPaddingTop);
-                    break;
-                case IconOrientation.Left:
-                    if (LayoutDirection == ViewLayoutDirectionType.LTR)
-                    {
-                        buttonIcon.PositionUsesPivotPoint = true;
-                        buttonIcon.ParentOrigin = NUI.ParentOrigin.CenterLeft;
-                        buttonIcon.PivotPoint = NUI.PivotPoint.CenterLeft;
-                        buttonIcon.Position2D = new Position2D(iconPaddingStart, 0);
-
-                        buttonText.PositionUsesPivotPoint = true;
-                        buttonText.ParentOrigin = NUI.ParentOrigin.CenterRight;
-                        buttonText.PivotPoint = NUI.PivotPoint.CenterRight;
-                        buttonText.Position2D = new Position2D(-textPaddingEnd, 0);
-                    }
-                    else
-                    {
-                        buttonIcon.PositionUsesPivotPoint = true;
-                        buttonIcon.ParentOrigin = NUI.ParentOrigin.CenterRight;
-                        buttonIcon.PivotPoint = NUI.PivotPoint.CenterRight;
-                        buttonIcon.Position2D = new Position2D(-iconPaddingStart, 0);
-
-                        buttonText.PositionUsesPivotPoint = true;
-                        buttonText.ParentOrigin = NUI.ParentOrigin.CenterLeft;
-                        buttonText.PivotPoint = NUI.PivotPoint.CenterLeft;
-                        buttonText.Position2D = new Position2D(textPaddingEnd, 0);
-                    }
-
-                    break;
-                case IconOrientation.Right:
-                    if (LayoutDirection == ViewLayoutDirectionType.RTL)
-                    {
-                        buttonIcon.PositionUsesPivotPoint = true;
-                        buttonIcon.ParentOrigin = NUI.ParentOrigin.CenterLeft;
-                        buttonIcon.PivotPoint = NUI.PivotPoint.CenterLeft;
-                        buttonIcon.Position2D = new Position2D(iconPaddingEnd, 0);
-
-                        buttonText.PositionUsesPivotPoint = true;
-                        buttonText.ParentOrigin = NUI.ParentOrigin.CenterRight;
-                        buttonText.PivotPoint = NUI.PivotPoint.CenterRight;
-                        buttonText.Position2D = new Position2D(-textPaddingStart, 0);
-                    }
-                    else
-                    {
-                        buttonIcon.PositionUsesPivotPoint = true;
-                        buttonIcon.ParentOrigin = NUI.ParentOrigin.CenterRight;
-                        buttonIcon.PivotPoint = NUI.PivotPoint.CenterRight;
-                        buttonIcon.Position2D = new Position2D(-iconPaddingEnd, 0);
-
-                        buttonText.PositionUsesPivotPoint = true;
-                        buttonText.ParentOrigin = NUI.ParentOrigin.CenterLeft;
-                        buttonText.PivotPoint = NUI.PivotPoint.CenterLeft;
-                        buttonText.Position2D = new Position2D(textPaddingStart, 0);
-                    }
-                    break;
-                default:
-                    break;
-            }
-            if (string.IsNullOrEmpty(buttonText.Text))
-            {
-                buttonIcon.ParentOrigin = NUI.ParentOrigin.Center;
-                buttonIcon.PivotPoint = NUI.PivotPoint.Center;
-            }
-        }
-
-        /// <summary>
-        /// Theme change callback when theme is changed, this callback will be trigger.
-        /// </summary>
-        /// <param name="sender">The sender</param>
-        /// <param name="e">The event data</param>
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        protected override void OnThemeChangedEvent(object sender, StyleManager.ThemeChangeEventArgs e)
-        {
-            ButtonStyle buttonStyle = StyleManager.Instance.GetViewStyle(StyleName) as ButtonStyle;
-            if (buttonStyle != null)
-            {
-                Style.CopyFrom(buttonStyle);
-                UpdateUIContent();
             }
         }
 
@@ -310,21 +243,60 @@ namespace Tizen.NUI.Components
             {
                 Extension?.OnDispose(this);
 
-                if (Icon != null)
+                if (buttonIcon != null)
                 {
-                    Utility.Dispose(Icon);
+                    Utility.Dispose(buttonIcon);
                 }
-                if (TextLabel != null)
+                if (buttonText != null)
                 {
-                    Utility.Dispose(TextLabel);
+                    Utility.Dispose(buttonText);
                 }
-                if (OverlayImage != null)
+                if (overlayImage != null)
                 {
-                    Utility.Dispose(OverlayImage);
+                    Utility.Dispose(overlayImage);
                 }
             }
 
             base.Dispose(type);
+        }
+
+        /// <summary>
+        /// Initializes AT-SPI object.
+        /// </summary>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public override void OnInitialize()
+        {
+            base.OnInitialize();
+            SetAccessibilityConstructor(Role.PushButton);
+
+            AccessibilityHighlightable = true;
+            EnableControlStatePropagation = true;
+
+            AccessibilityManager.Instance.SetAccessibilityAttribute(this, AccessibilityManager.AccessibilityAttribute.Trait, "Button");
+
+            buttonText = CreateText();
+            buttonIcon = CreateIcon();
+            LayoutItems();
+
+#if PROFILE_MOBILE
+            Feedback = true;
+#endif
+        }
+
+        /// <inheritdoc/>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public override void OnRelayout(Vector2 size, RelayoutContainer container)
+        {
+            if (size == null) return;
+
+            if (size.Equals(this.size))
+            {
+                return;
+            }
+
+            this.size = new Vector2(size);
+
+            UpdateSizeAndSpacing();
         }
 
         /// <inheritdoc/>
@@ -335,9 +307,9 @@ namespace Tizen.NUI.Components
 
             var stateEnabled = !controlStateChangedInfo.CurrentState.Contains(ControlState.Disabled);
 
-            if (isEnabled != stateEnabled)
+            if (IsEnabled != stateEnabled)
             {
-                isEnabled = stateEnabled;
+                IsEnabled = stateEnabled;
             }
 
             var statePressed = controlStateChangedInfo.CurrentState.Contains(ControlState.Pressed);
@@ -349,44 +321,150 @@ namespace Tizen.NUI.Components
         }
 
         /// <summary>
-        /// It is hijack by using protected, style copy problem when class inherited from Button.
+        /// Put sub items (e.g. buttonText, buttonIcon) to the right place.
         /// </summary>
-        /// <since_tizen> 6 </since_tizen>
-        private void Initialize()
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        protected virtual void LayoutItems()
         {
-            var style = (ButtonStyle)Style;
-            EnableControlStatePropagation = true;
-            UpdateState();
-            LayoutDirectionChanged += OnLayoutDirectionChanged;
+            if (buttonIcon == null || buttonText == null)
+            {
+                return;
+            }
+
+            buttonIcon.Unparent();
+            buttonText.Unparent();
+            overlayImage?.Unparent();
+
+            if (IconRelativeOrientation == IconOrientation.Left)
+            {
+                Layout = new LinearLayout()
+                {
+                    LinearOrientation = LinearLayout.Orientation.Horizontal,
+                    LinearAlignment = itemAlignment,
+                    CellPadding = itemSpacing ?? new Size2D(0, 0)
+                };
+
+                Add(buttonIcon);
+                Add(buttonText);
+            }
+            else if (IconRelativeOrientation == IconOrientation.Right)
+            {
+                Layout = new LinearLayout()
+                {
+                    LinearOrientation = LinearLayout.Orientation.Horizontal,
+                    LinearAlignment = itemAlignment,
+                    CellPadding = itemSpacing ?? new Size2D(0, 0)
+                };
+
+                Add(buttonText);
+                Add(buttonIcon);
+            }
+            else if (IconRelativeOrientation == IconOrientation.Top)
+            {
+                Layout = new LinearLayout()
+                {
+                    LinearOrientation = LinearLayout.Orientation.Vertical,
+                    LinearAlignment = itemAlignment,
+                    CellPadding = itemSpacing ?? new Size2D(0, 0)
+                };
+
+                Add(buttonIcon);
+                Add(buttonText);
+            }
+            else if (IconRelativeOrientation == IconOrientation.Bottom)
+            {
+                Layout = new LinearLayout()
+                {
+                    LinearOrientation = LinearLayout.Orientation.Vertical,
+                    LinearAlignment = itemAlignment,
+                    CellPadding = itemSpacing ?? new Size2D(0, 0)
+                };
+
+                Add(buttonText);
+                Add(buttonIcon);
+            }
+
+            if (overlayImage != null)
+            {
+                overlayImage.ExcludeLayouting = true;
+                Add(overlayImage);
+            }
         }
 
-        private void UpdateUIContent()
+        private void UpdateSizeAndSpacing()
         {
-            MeasureText();
-            LayoutChild();
+            if (size == null || buttonIcon == null || buttonText == null)
+            {
+                return;
+            }
 
-            Sensitive = isEnabled;
+            LinearLayout layout = Layout as LinearLayout;
+
+            if (layout == null)
+            {
+                return;
+            }
+
+            float lengthWithoutText = 0;
+            Size2D cellPadding = null;
+            Extents iconMargin = buttonIcon.Margin ?? new Extents(0);
+            Extents textMargin = buttonText.Margin ?? new Extents(0);
+
+            if (buttonIcon.Size.Width != 0 && buttonIcon.Size.Height != 0)
+            {
+                lengthWithoutText = buttonIcon.Size.Width;
+
+                if (!String.IsNullOrEmpty(buttonText.Text))
+                {
+                    cellPadding = itemSpacing;
+
+                    if (iconRelativeOrientation == IconOrientation.Left || iconRelativeOrientation == IconOrientation.Right)
+                    {
+                        lengthWithoutText += (itemSpacing?.Width ?? 0) + iconMargin.Start + iconMargin.End + textMargin.Start + textMargin.End;
+                    }
+                    else
+                    {
+                        lengthWithoutText += (itemSpacing?.Height ?? 0) + iconMargin.Top + iconMargin.Bottom + textMargin.Top + textMargin.Bottom;
+                    }
+                }
+            }
+
+            layout.CellPadding = cellPadding ?? new Size2D(0, 0);
+
+            // If the button has fixed width and the text is not empty, the text should not exceed button boundary.
+            if (WidthSpecification != LayoutParamPolicies.WrapContent && !String.IsNullOrEmpty(buttonText.Text))
+            {
+                buttonText.MaximumSize = new Size2D((int)Math.Max(size.Width - lengthWithoutText, Math.Max(buttonText.MinimumSize.Width, 1)), (int)size.Height);
+            }
         }
 
-        private void OnLayoutDirectionChanged(object sender, LayoutDirectionChangedEventArgs e)
-        {
-            MeasureText();
-            LayoutChild();
-        }
-
-        private void OnClickInternal(ClickEventArgs eventArgs)
+        private void OnClickedInternal(ClickedEventArgs eventArgs)
         {
             Command?.Execute(CommandParameter);
-            OnClick(eventArgs);
-            Extension?.OnClick(this, eventArgs);
-            ClickEvent?.Invoke(this, eventArgs);
+            OnClicked(eventArgs);
+            Extension?.OnClicked(this, eventArgs);
+
+            ClickEventArgs nestedEventArgs = new ClickEventArgs();
+            ClickEvent?.Invoke(this, nestedEventArgs);
+            Clicked?.Invoke(this, eventArgs);
         }
 
-        private void OnIconRelayout(object sender, EventArgs e)
+        internal override bool OnAccessibilityActivated()
         {
-            MeasureText();
-            LayoutChild();
-        }
+            using (var key = new Key())
+            {
+                key.State = Key.StateType.Down;
+                key.KeyPressedName = "Return";
 
+                // Touch Down
+                OnKey(key);
+
+                // Touch Up
+                key.State = Key.StateType.Up;
+                OnKey(key);
+            }
+
+            return true;
+        }
     }
 }

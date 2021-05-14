@@ -1,3 +1,20 @@
+/*
+ * Copyright(c) 2021 Samsung Electronics Co., Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -101,7 +118,12 @@ namespace Tizen.NUI.Binding
         /// <returns>System.Boolean</returns>
         public delegate bool ValidateValueDelegate<in TPropertyType>(BindableObject bindable, TPropertyType value);
 
-        static readonly Dictionary<Type, TypeConverter> WellKnownConvertTypes = new  Dictionary<Type,TypeConverter>
+        //To confirm the static dictionary will be created before the constructor is called.
+        static BindableProperty()
+        {
+        }
+
+        static readonly Dictionary<Type, TypeConverter> WellKnownConvertTypes = new Dictionary<Type, TypeConverter>
         {
             { typeof(Uri), new UriTypeConverter() },
             { typeof(Color), new ColorTypeConverter() },
@@ -145,19 +167,19 @@ namespace Tizen.NUI.Binding
                                  CoerceValueDelegate coerceValue = null, BindablePropertyBindingChanging bindingChanging = null, bool isReadOnly = false, CreateDefaultValueDelegate defaultValueCreator = null)
         {
             if (propertyName == null)
-                throw new ArgumentNullException("propertyName");
+                throw new ArgumentNullException(nameof(propertyName));
             if (ReferenceEquals(returnType, null))
-                throw new ArgumentNullException("returnType");
+                throw new ArgumentNullException(nameof(returnType));
             if (ReferenceEquals(declaringType, null))
-                throw new ArgumentNullException("declaringType");
+                throw new ArgumentNullException(nameof(declaringType));
 
             // don't use Enum.IsDefined as its redonkulously expensive for what it does
             if (defaultBindingMode != BindingMode.Default && defaultBindingMode != BindingMode.OneWay && defaultBindingMode != BindingMode.OneWayToSource && defaultBindingMode != BindingMode.TwoWay && defaultBindingMode != BindingMode.OneTime)
-                throw new ArgumentException("Not a valid type of BindingMode", "defaultBindingMode");
+                throw new ArgumentException("Not a valid type of BindingMode", nameof(defaultBindingMode));
             if (defaultValue == null && Nullable.GetUnderlyingType(returnType) == null && returnType.GetTypeInfo().IsValueType)
-                throw new ArgumentException("Not a valid default value", "defaultValue");
+                throw new ArgumentException("Not a valid default value", nameof(defaultValue));
             if (defaultValue != null && !returnType.IsInstanceOfType(defaultValue))
-                throw new ArgumentException("Default value did not match return type", "defaultValue");
+                throw new ArgumentException("Default value did not match return type", nameof(defaultValue));
             if (defaultBindingMode == BindingMode.Default)
                 defaultBindingMode = BindingMode.OneWay;
 
@@ -487,7 +509,7 @@ namespace Tizen.NUI.Binding
                                                                           CreateDefaultValueDelegate<TDeclarer, TPropertyType> defaultValueCreator = null) where TDeclarer : BindableObject
         {
             if (getter == null)
-                throw new ArgumentNullException("getter");
+                throw new ArgumentNullException(nameof(getter));
 
             Expression expr = getter.Body;
 
@@ -497,7 +519,7 @@ namespace Tizen.NUI.Binding
 
             var member = expr as MemberExpression;
             if (member == null)
-                throw new ArgumentException("getter must be a MemberExpression", "getter");
+                throw new ArgumentException("getter must be a MemberExpression", nameof(getter));
 
             var property = (PropertyInfo)member.Member;
 
@@ -536,7 +558,7 @@ namespace Tizen.NUI.Binding
                                                                                   CreateDefaultValueDelegate<BindableObject, TPropertyType> defaultValueCreator = null)
         {
             if (staticgetter == null)
-                throw new ArgumentNullException("staticgetter");
+                throw new ArgumentNullException(nameof(staticgetter));
 
             Expression expr = staticgetter.Body;
 
@@ -546,11 +568,11 @@ namespace Tizen.NUI.Binding
 
             var methodcall = expr as MethodCallExpression;
             if (methodcall == null)
-                throw new ArgumentException("staticgetter must be a MethodCallExpression", "staticgetter");
+                throw new ArgumentException("staticgetter must be a MethodCallExpression", nameof(staticgetter));
 
             MethodInfo method = methodcall.Method;
             if (!method.Name.StartsWith("Get", StringComparison.Ordinal))
-                throw new ArgumentException("staticgetter name must start with Get", "staticgetter");
+                throw new ArgumentException("staticgetter name must start with Get", nameof(staticgetter));
 
             string propertyname = method.Name.Substring(3);
 

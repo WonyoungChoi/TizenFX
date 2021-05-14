@@ -1,5 +1,5 @@
 /*
- * Copyright(c) 2020 Samsung Electronics Co., Ltd.
+ * Copyright(c) 2021 Samsung Electronics Co., Ltd.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,8 @@
  *
  */
 
- using System.ComponentModel;
+using System;
+using System.ComponentModel;
 
 namespace Tizen.NUI
 {
@@ -23,8 +24,9 @@ namespace Tizen.NUI
     /// <summary>
     /// The Shadow composed of image for View
     /// </summary>
+    [Tizen.NUI.Binding.TypeConverter(typeof(Tizen.NUI.Binding.ImageShadowTypeConverter))]
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public class ImageShadow : ShadowBase
+    public class ImageShadow : ShadowBase, ICloneable
     {
         private static readonly Rectangle noBorder = new Rectangle();
 
@@ -34,33 +36,51 @@ namespace Tizen.NUI
         [EditorBrowsable(EditorBrowsableState.Never)]
         public ImageShadow() : base()
         {
-            Border = noBorder;
+            Border = new Rectangle(noBorder);
         }
 
         /// <summary>
         /// Constructor
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public ImageShadow(string url, Rectangle border, Vector2 offset, Vector2 extents) : base(offset, extents)
+        public ImageShadow(string url, Vector2 offset = null, Vector2 extents = null) : this(url, null, offset, extents)
+        {
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public ImageShadow(string url, Rectangle border, Vector2 offset = null, Vector2 extents = null) : base(offset, extents)
         {
             Url = url;
-            Border = border;
+            Border = border == null ? null : new Rectangle(border);
         }
 
         /// <summary>
         /// Constructor
         /// </summary>
+        /// <exception cref="ArgumentNullException"> Thrown when other is null. </exception>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public ImageShadow(ImageShadow other) : this(other.Url, other.Border, other.Offset, other.Extents)
+        public ImageShadow(ImageShadow other) : this(other == null ? throw new ArgumentNullException(nameof(other)) : other.Url, other.Border, other.Offset, other.Extents)
         {
         }
 
         /// <summary>
-        /// Constructor
+        /// Create a Shadow from a propertyMap.
         /// </summary>
-        [EditorBrowsable(EditorBrowsableState.Never)]
         internal ImageShadow(PropertyMap propertyMap) : base(propertyMap)
         {
+            Border = noBorder;
+            PropertyValue pValue = propertyMap.Find(ImageVisualProperty.Border);
+            pValue?.Get(Border);
+            pValue?.Dispose();
+
+            string url = null;
+            pValue = propertyMap.Find(ImageVisualProperty.URL);
+            pValue?.Get(out url);
+            pValue?.Dispose();
+            Url = url;
         }
 
         /// <summary>
@@ -79,7 +99,7 @@ namespace Tizen.NUI
         /// The url for the shadow image to load.
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public string Url { get; set; }
+        public string Url { get; internal set; }
 
         /// <summary>
         /// Optional.<br />
@@ -87,7 +107,7 @@ namespace Tizen.NUI
         /// Set left, right, bottom, top length of the border you don't want to stretch in the image.
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public Rectangle Border { get; set; }
+        public Rectangle Border { get; internal set; }
 
         /// <inheritdoc/>
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -121,6 +141,10 @@ namespace Tizen.NUI
             }
         }
 
+        /// <inheritdoc/>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public object Clone() => new ImageShadow(this);
+
         internal override bool IsEmpty()
         {
             return string.IsNullOrEmpty(Url);
@@ -145,28 +169,16 @@ namespace Tizen.NUI
 
             map[ImageVisualProperty.Border] = PropertyValue.CreateWithGuard(Border);
 
-            map[ImageVisualProperty.URL] = PropertyValue.CreateWithGuard(Url);
-
-            return map;
-        }
-
-        /// <inheritdoc/>
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        protected override bool SetPropertyMap(PropertyMap propertyMap)
-        {
-            if (!base.SetPropertyMap(propertyMap))
+            string urlString = Url;
+            if (Url.StartsWith("*Resource*"))
             {
-                return false;
+                string resource = Tizen.Applications.Application.Current.DirectoryInfo.Resource;
+                urlString = Url.Replace("*Resource*", resource);
             }
 
-            Border = noBorder;
-            propertyMap.Find(ImageVisualProperty.Border)?.Get(Border);
+            map[ImageVisualProperty.URL] = PropertyValue.CreateWithGuard(urlString);
 
-            string url = null;
-            propertyMap.Find(ImageVisualProperty.URL)?.Get(out url);
-            Url = url;
-
-            return true;
+            return map;
         }
     }
 }

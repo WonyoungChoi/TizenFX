@@ -1,3 +1,20 @@
+/*
+ * Copyright(c) 2021 Samsung Electronics Co., Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -6,22 +23,23 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
-using Tizen.NUI.Binding.Internals;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Tizen.NUI.Binding
 {
     /// This will be public opened in tizen_6.0 after ACR done. Before ACR, need to be hidden as inhouse API.
+    [SuppressMessage("Microsoft.Design", "CA1724: Type names should not match namespaces")]
     [EditorBrowsable(EditorBrowsableState.Never)]
     public sealed class Binding : BindingBase
     {
         internal const string SelfPath = ".";
-        IValueConverter _converter;
-        object _converterParameter;
+        IValueConverter converter;
+        object converterParameter;
 
-        BindingExpression _expression;
-        string _path;
-        object _source;
-        string _updateSourceEventName;
+        BindingExpression expression;
+        string path;
+        object source;
+        string updateSourceEventName;
 
         /// This will be public opened in tizen_6.0 after ACR done. Before ACR, need to be hidden as inhouse API.
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -34,9 +52,9 @@ namespace Tizen.NUI.Binding
         public Binding(string path, BindingMode mode = BindingMode.Default, IValueConverter converter = null, object converterParameter = null, string stringFormat = null, object source = null)
         {
             if (path == null)
-                throw new ArgumentNullException("path");
+                throw new ArgumentNullException(nameof(path));
             if (string.IsNullOrWhiteSpace(path))
-                throw new ArgumentException("path can not be an empty string", "path");
+                throw new ArgumentException("path can not be an empty string", nameof(path));
 
             Path = path;
             Converter = converter;
@@ -50,12 +68,12 @@ namespace Tizen.NUI.Binding
         [EditorBrowsable(EditorBrowsableState.Never)]
         public IValueConverter Converter
         {
-            get { return _converter; }
+            get { return converter; }
             set
             {
                 ThrowIfApplied();
 
-                _converter = value;
+                converter = value;
             }
         }
 
@@ -63,12 +81,12 @@ namespace Tizen.NUI.Binding
         [EditorBrowsable(EditorBrowsableState.Never)]
         public object ConverterParameter
         {
-            get { return _converterParameter; }
+            get { return converterParameter; }
             set
             {
                 ThrowIfApplied();
 
-                _converterParameter = value;
+                converterParameter = value;
             }
         }
 
@@ -76,13 +94,13 @@ namespace Tizen.NUI.Binding
         [EditorBrowsable(EditorBrowsableState.Never)]
         public string Path
         {
-            get { return _path; }
+            get { return path; }
             set
             {
                 ThrowIfApplied();
 
-                _path = value;
-                _expression = new BindingExpression(this, !string.IsNullOrWhiteSpace(value) ? value : SelfPath);
+                path = value;
+                expression = new BindingExpression(this, !string.IsNullOrWhiteSpace(value) ? value : SelfPath);
             }
         }
 
@@ -90,49 +108,51 @@ namespace Tizen.NUI.Binding
         [EditorBrowsable(EditorBrowsableState.Never)]
         public object Source
         {
-            get { return _source; }
+            get { return source; }
             set
             {
                 ThrowIfApplied();
-                _source = value;
+                source = value;
             }
         }
 
         /// This will be public opened in tizen_6.0 after ACR done. Before ACR, need to be hidden as inhouse API.
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public string UpdateSourceEventName {
-            get { return _updateSourceEventName; }
-            set {
+        public string UpdateSourceEventName
+        {
+            get { return updateSourceEventName; }
+            set
+            {
                 ThrowIfApplied();
-                _updateSourceEventName = value;
+                updateSourceEventName = value;
             }
         }
 
         /// This will be public opened in tizen_6.0 after ACR done. Before ACR, need to be hidden as inhouse API.
         [EditorBrowsable(EditorBrowsableState.Never)]
-        [Obsolete]
+        [ObsoleteAttribute(" ", false)]
         public static Binding Create<TSource>(Expression<Func<TSource, object>> propertyGetter, BindingMode mode = BindingMode.Default, IValueConverter converter = null, object converterParameter = null,
                                               string stringFormat = null)
         {
             if (propertyGetter == null)
-                throw new ArgumentNullException("propertyGetter");
+                throw new ArgumentNullException(nameof(propertyGetter));
 
-			return new Binding(GetBindingPath(propertyGetter), mode, converter, converterParameter, stringFormat);
-		}
+            return new Binding(GetBindingPath(propertyGetter), mode, converter, converterParameter, stringFormat);
+        }
 
         internal override void Apply(bool fromTarget)
         {
             base.Apply(fromTarget);
 
-            if (_expression == null)
-                _expression = new BindingExpression(this, SelfPath);
+            if (expression == null)
+                expression = new BindingExpression(this, SelfPath);
 
-            _expression.Apply(fromTarget);
+            expression.Apply(fromTarget);
         }
 
         internal override void Apply(object newContext, BindableObject bindObj, BindableProperty targetProperty, bool fromBindingContextChanged = false)
         {
-            object src = _source;
+            object src = source;
             var isApplied = IsApplied;
 
             base.Apply(src ?? newContext, bindObj, targetProperty, fromBindingContextChanged: fromBindingContextChanged);
@@ -141,10 +161,10 @@ namespace Tizen.NUI.Binding
                 return;
 
             object bindingContext = src ?? Context ?? newContext;
-            if (_expression == null && bindingContext != null)
-                _expression = new BindingExpression(this, SelfPath);
+            if (expression == null && bindingContext != null)
+                expression = new BindingExpression(this, SelfPath);
 
-            _expression?.Apply(bindingContext, bindObj, targetProperty);
+            expression?.Apply(bindingContext, bindObj, targetProperty);
         }
 
         internal override BindingBase Clone()
@@ -172,11 +192,11 @@ namespace Tizen.NUI.Binding
         {
             if (Source != null && fromBindingContextChanged && IsApplied)
                 return;
-            
+
             base.Unapply(fromBindingContextChanged: fromBindingContextChanged);
 
-            if (_expression != null)
-                _expression.Unapply();
+            if (expression != null)
+                expression.Unapply();
         }
 
         [Obsolete]

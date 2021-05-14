@@ -63,8 +63,7 @@ namespace Tizen.Network.Bluetooth
         /// <summary>
         /// The name of the device.
         /// </summary>
-        [MarshalAsAttribute(UnmanagedType.LPStr)]
-        internal string Name;
+        internal IntPtr Name;
 
         /// <summary>
         /// The class of the device.
@@ -116,8 +115,7 @@ namespace Tizen.Network.Bluetooth
         [MarshalAsAttribute(UnmanagedType.LPStr)]
         internal string Address;
 
-        [MarshalAsAttribute(UnmanagedType.LPStr)]
-        internal string Name;
+        internal IntPtr Name;
 
         internal BluetoothClassStruct Class;
 
@@ -136,7 +134,7 @@ namespace Tizen.Network.Bluetooth
 
         internal IntPtr ManufacturerData;
     }
-    
+
     [NativeStruct("bt_device_sdp_info_s", Include="bluetooth_type.h", PkgConfig="capi-network-bluetooth")]
     [StructLayout(LayoutKind.Sequential)]
     internal struct BluetoothDeviceSdpStruct
@@ -225,17 +223,14 @@ namespace Tizen.Network.Bluetooth
         internal IntPtr data;
     }
 
+    [NativeStruct("bt_avrcp_metadata_attributes_info_s", Include="bluetooth_type.h", PkgConfig="capi-network-bluetooth")]
     [StructLayout(LayoutKind.Sequential)]
     internal struct TrackInfoStruct
     {
-        [MarshalAsAttribute(UnmanagedType.LPStr)]
-        internal string Title;
-        [MarshalAsAttribute(UnmanagedType.LPStr)]
-        internal string Artist;
-        [MarshalAsAttribute(UnmanagedType.LPStr)]
-        internal string Album;
-        [MarshalAsAttribute(UnmanagedType.LPStr)]
-        internal string Genre;
+        internal IntPtr Title;
+        internal IntPtr Artist;
+        internal IntPtr Album;
+        internal IntPtr Genre;
         internal uint total_tracks;
         internal uint number;
         internal uint duration;
@@ -244,6 +239,9 @@ namespace Tizen.Network.Bluetooth
     {
         internal static BluetoothDevice ConvertStructToDeviceClass(BluetoothDeviceStruct device)
         {
+            const int DeviceNameLengthMax = 248;
+            const int UuidLengthMax = 50;
+
             BluetoothDevice resultDevice = new BluetoothDevice();
             Collection<string> uuidList = null;
 
@@ -253,13 +251,16 @@ namespace Tizen.Network.Bluetooth
                 Marshal.Copy (device.ServiceUuidList, extensionList, 0, device.ServiceCount);
                 uuidList = new Collection<string> ();
                 foreach (IntPtr extension in extensionList) {
-                    string uuid = Marshal.PtrToStringAnsi (extension);
-                    uuidList.Add (uuid);
+                    if (extension != IntPtr.Zero)
+                    {
+                        string uuid = Marshal.PtrToStringAnsi (extension, UuidLengthMax);
+                        uuidList.Add (uuid);
+                    }
                 }
             }
 
             resultDevice.RemoteDeviceAddress = device.Address;
-            resultDevice.RemoteDeviceName = device.Name;
+            resultDevice.RemoteDeviceName = Marshal.PtrToStringAnsi(device.Name, DeviceNameLengthMax);
             resultDevice.RemoteDeviceClass = new BluetoothClass();
             resultDevice.Class.MajorType = device.Class.MajorDeviceClassType;
             resultDevice.Class.MinorType = device.Class.MinorDeviceClassType;
@@ -281,19 +282,24 @@ namespace Tizen.Network.Bluetooth
         {
             BluetoothDevice resultDevice = new BluetoothDevice();
             Collection<string> uuidList = null;
+            const int DeviceNameLengthMax = 248;
+            const int UuidLengthMax = 50;
 
             if (structDevice.ServiceCount > 0) {
                 IntPtr[] extensionList = new IntPtr[structDevice.ServiceCount];
                 Marshal.Copy (structDevice.ServiceUuidList, extensionList, 0, structDevice.ServiceCount);
                 uuidList = new Collection<string> ();
                 foreach (IntPtr extension in extensionList) {
-                    string uuid = Marshal.PtrToStringAnsi (extension);
-                    uuidList.Add (uuid);
+                    if (extension != IntPtr.Zero)
+                    {
+                        string uuid = Marshal.PtrToStringAnsi(extension, UuidLengthMax);
+                        uuidList.Add(uuid);
+                    }
                 }
             }
 
             resultDevice.RemoteDeviceAddress = structDevice.Address;
-            resultDevice.RemoteDeviceName = structDevice.Name;
+            resultDevice.RemoteDeviceName = Marshal.PtrToStringAnsi(structDevice.Name, DeviceNameLengthMax);
 
             resultDevice.RemoteDeviceClass = new BluetoothClass();
             resultDevice.Class.MajorType = structDevice.Class.MajorDeviceClassType;

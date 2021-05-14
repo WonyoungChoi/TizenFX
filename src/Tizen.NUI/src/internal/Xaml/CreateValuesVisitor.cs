@@ -1,3 +1,20 @@
+/*
+ * Copyright(c) 2021 Samsung Electronics Co., Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -47,6 +64,8 @@ namespace Tizen.NUI.Xaml
             XamlParseException xpe;
             var type = XamlParser.GetElementType(node.XmlType, node, Context.RootElement?.GetType().GetTypeInfo().Assembly,
                 out xpe);
+            if (type == null)
+                throw new ArgumentNullException(null, "type should not be null");
             if (xpe != null)
                 throw xpe;
 
@@ -61,7 +80,7 @@ namespace Tizen.NUI.Xaml
                     .DeclaredConstructors.Any(
                         ci =>
                             ci.IsPublic && ci.GetParameters().Length != 0 &&
-                            ci.GetParameters().All(pi => pi.CustomAttributes.Any(attr => attr.AttributeType == typeof (ParameterAttribute)))) &&
+                            ci.GetParameters().All(pi => pi.CustomAttributes.Any(attr => attr.AttributeType == typeof(ParameterAttribute)))) &&
                 ValidateCtorArguments(type, node, out ctorargname))
                 value = CreateFromParameterizedConstructor(type, node);
             else if (!type.GetTypeInfo().DeclaredConstructors.Any(ci => ci.IsPublic && ci.GetParameters().Length == 0) &&
@@ -74,9 +93,9 @@ namespace Tizen.NUI.Xaml
                 //this is a trick as the DataTemplate parameterless ctor is internal, and we can't CreateInstance(..., false) on WP7
                 try
                 {
-                    if (type == typeof (DataTemplate))
+                    if (type == typeof(DataTemplate))
                         value = new DataTemplate();
-                    if (type == typeof (ControlTemplate))
+                    if (type == typeof(ControlTemplate))
                         value = new ControlTemplate();
                     if (value == null && node.CollectionItems.Any() && node.CollectionItems.First() is ValueNode)
                     {
@@ -138,7 +157,7 @@ namespace Tizen.NUI.Xaml
                 INode xKey;
                 if (!node.Properties.TryGetValue(XmlName.xKey, out xKey))
                     xKey = null;
-                
+
                 node.Properties.Clear();
                 node.CollectionItems.Clear();
 
@@ -178,7 +197,7 @@ namespace Tizen.NUI.Xaml
                     .DeclaredConstructors.FirstOrDefault(
                         ci =>
                             ci.GetParameters().Length != 0 && ci.IsPublic &&
-                            ci.GetParameters().All(pi => pi.CustomAttributes.Any(attr => attr.AttributeType == typeof (ParameterAttribute))));
+                            ci.GetParameters().All(pi => pi.CustomAttributes.Any(attr => attr.AttributeType == typeof(ParameterAttribute))));
             if (ctorInfo == null)
                 return true;
             foreach (var parameter in ctorInfo.GetParameters())
@@ -205,7 +224,7 @@ namespace Tizen.NUI.Xaml
                     .DeclaredConstructors.FirstOrDefault(
                         ci =>
                             ci.GetParameters().Length != 0 && ci.IsPublic &&
-                            ci.GetParameters().All(pi => pi.CustomAttributes.Any(attr => attr.AttributeType == typeof (ParameterAttribute))));
+                            ci.GetParameters().All(pi => pi.CustomAttributes.Any(attr => attr.AttributeType == typeof(ParameterAttribute))));
             object[] arguments = CreateArgumentsArray(node, ctorInfo);
 
             if (arguments != null)
@@ -242,8 +261,9 @@ namespace Tizen.NUI.Xaml
             }
 
             var factoryMethod = ((string)((ValueNode)node.Properties[XmlName.xFactoryMethod]).Value);
-            Type[] types = arguments == null ? new Type[0] : arguments.Select(a => a.GetType()).ToArray();
-            Func<MethodInfo, bool> isMatch = m => {
+            Type[] types = arguments == null ? System.Array.Empty<Type>() : arguments.Select(a => a.GetType()).ToArray();
+            Func<MethodInfo, bool> isMatch = m =>
+            {
                 if (m.Name != factoryMethod)
                     return false;
                 var p = m.GetParameters();
@@ -251,15 +271,16 @@ namespace Tizen.NUI.Xaml
                     return false;
                 if (!m.IsStatic)
                     return false;
-                for (var i = 0; i < p.Length; i++) {
-                    if ((p [i].ParameterType.IsAssignableFrom(types [i])))
+                for (var i = 0; i < p.Length; i++)
+                {
+                    if ((p[i].ParameterType.IsAssignableFrom(types[i])))
                         continue;
-                    var op_impl =  p[i].ParameterType.GetImplicitConversionOperator(fromType: types[i], toType: p[i].ParameterType)
+                    var op_impl = p[i].ParameterType.GetImplicitConversionOperator(fromType: types[i], toType: p[i].ParameterType)
                                 ?? types[i].GetImplicitConversionOperator(fromType: types[i], toType: p[i].ParameterType);
 
                     if (op_impl == null)
                         return false;
-                    arguments [i] = op_impl.Invoke(null, new [] { arguments [i]});
+                    arguments[i] = op_impl.Invoke(null, new[] { arguments[i] });
                 }
                 return true;
             };
@@ -301,7 +322,7 @@ namespace Tizen.NUI.Xaml
 
         public object[] CreateArgumentsArray(IElementNode enode, ConstructorInfo ctorInfo)
         {
-            if( ctorInfo != null )
+            if (ctorInfo != null)
             {
                 var n = ctorInfo.GetParameters().Length;
                 var array = new object[n];
@@ -309,7 +330,7 @@ namespace Tizen.NUI.Xaml
                 {
                     var parameter = ctorInfo.GetParameters()[i];
                     var propname =
-                        parameter?.CustomAttributes?.First(attr => attr.AttributeType == typeof (ParameterAttribute))?
+                        parameter?.CustomAttributes?.First(attr => attr.AttributeType == typeof(ParameterAttribute))?
                             .ConstructorArguments.First()
                             .Value as string;
                     var name = new XmlName("", propname);
@@ -374,83 +395,94 @@ namespace Tizen.NUI.Xaml
             {
                 var valuestring = ((ValueNode)node.CollectionItems[0]).Value as string;
 
-                if (nodeType == typeof(SByte)) {
+                if (nodeType == typeof(SByte))
+                {
                     sbyte retval;
                     if (sbyte.TryParse(valuestring, NumberStyles.Number, CultureInfo.InvariantCulture, out retval))
                         return retval;
                 }
-                if (nodeType == typeof(Int16)) {
+                if (nodeType == typeof(Int16))
+                {
                     short retval;
                     if (short.TryParse(valuestring, NumberStyles.Number, CultureInfo.InvariantCulture, out retval))
                         return retval;
                 }
-                if (nodeType == typeof(Int32)) {
+                if (nodeType == typeof(Int32))
+                {
                     int retval;
                     if (int.TryParse(valuestring, NumberStyles.Number, CultureInfo.InvariantCulture, out retval))
                         return retval;
                 }
-                if (nodeType == typeof(Int64)) {
+                if (nodeType == typeof(Int64))
+                {
                     long retval;
                     if (long.TryParse(valuestring, NumberStyles.Number, CultureInfo.InvariantCulture, out retval))
                         return retval;
                 }
-                if (nodeType == typeof(Byte)) {
+                if (nodeType == typeof(Byte))
+                {
                     byte retval;
                     if (byte.TryParse(valuestring, NumberStyles.Number, CultureInfo.InvariantCulture, out retval))
                         return retval;
                 }
-                if (nodeType == typeof(UInt16)) {
+                if (nodeType == typeof(UInt16))
+                {
                     ushort retval;
                     if (ushort.TryParse(valuestring, NumberStyles.Number, CultureInfo.InvariantCulture, out retval))
                         return retval;
                 }
-                if (nodeType == typeof(UInt32)) {
+                if (nodeType == typeof(UInt32))
+                {
                     uint retval;
                     if (uint.TryParse(valuestring, NumberStyles.Number, CultureInfo.InvariantCulture, out retval))
                         return retval;
                 }
-                if (nodeType == typeof(UInt64)) {
+                if (nodeType == typeof(UInt64))
+                {
                     ulong retval;
                     if (ulong.TryParse(valuestring, NumberStyles.Number, CultureInfo.InvariantCulture, out retval))
                         return retval;
                 }
-                if (nodeType == typeof(Single)) {
+                if (nodeType == typeof(Single))
+                {
                     float retval;
                     if (float.TryParse(valuestring, NumberStyles.Number, CultureInfo.InvariantCulture, out retval))
                         return retval;
                 }
-                if (nodeType == typeof(Double)) {
+                if (nodeType == typeof(Double))
+                {
                     double retval;
                     if (double.TryParse(valuestring, NumberStyles.Number, CultureInfo.InvariantCulture, out retval))
                         return retval;
                 }
-                if (nodeType == typeof (Boolean))
+                if (nodeType == typeof(Boolean))
                 {
                     bool outbool;
                     if (bool.TryParse(valuestring, out outbool))
                         return outbool;
                 }
-                if (nodeType == typeof(TimeSpan)) {
+                if (nodeType == typeof(TimeSpan))
+                {
                     TimeSpan retval;
                     if (TimeSpan.TryParse(valuestring, CultureInfo.InvariantCulture, out retval))
                         return retval;
                 }
-                if (nodeType == typeof (char))
+                if (nodeType == typeof(char))
                 {
                     char retval;
                     if (char.TryParse(valuestring, out retval))
                         return retval;
                 }
-                if (nodeType == typeof (string))
+                if (nodeType == typeof(string))
                     return valuestring;
-                if (nodeType == typeof (decimal))
+                if (nodeType == typeof(decimal))
                 {
                     decimal retval;
                     if (decimal.TryParse(valuestring, NumberStyles.Number, CultureInfo.InvariantCulture, out retval))
                         return retval;
                 }
 
-                else if (nodeType == typeof (Uri))
+                else if (nodeType == typeof(Uri))
                 {
                     Uri retval;
                     if (Uri.TryCreate(valuestring, UriKind.RelativeOrAbsolute, out retval))

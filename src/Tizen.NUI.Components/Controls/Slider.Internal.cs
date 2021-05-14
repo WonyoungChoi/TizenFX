@@ -1,4 +1,21 @@
-﻿using System;
+﻿/*
+ * Copyright(c) 2021 Samsung Electronics Co., Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+using System;
 using System.ComponentModel;
 using Tizen.NUI.BaseComponents;
 
@@ -10,6 +27,10 @@ namespace Tizen.NUI.Components
         private ImageView bgTrackImage = null;
         // the slided track image object
         private ImageView slidedTrackImage = null;
+        // the warning track image object
+        private ImageView warningTrackImage = null;
+        // the warning slided track image object
+        private ImageView warningSlidedTrackImage = null;
         // the thumb image object
         private ImageView thumbImage = null;
         // the low indicator image object
@@ -31,6 +52,8 @@ namespace Tizen.NUI.Components
         private float maxValue = 100;
         // the current value
         private float curValue = 0;
+        // the warning start value
+        private float warningStartValue = 100;
         // the size of the low indicator
         private Size lowIndicatorSize = null;
         // the size of the high indicator
@@ -38,25 +61,55 @@ namespace Tizen.NUI.Components
         // the track thickness value
         private uint? trackThickness = null;
         // the value of the space between track and indicator object
-        private Extents _spaceBetweenTrackAndIndicator = null;
+        private Extents spaceTrackIndicator = null;
+        // Whether the value indicator is shown or not
+        private bool isValueShown = false;
+        // the value indicator text
+        private TextLabel valueIndicatorText = null;
+        // the value indicator image object
+        private ImageView valueIndicatorImage = null;
+
+        // To store the thumb size of normal state
+        private Size thumbSize = null;
+        // To store the thumb image url of normal state
+        private string thumbImageUrl = null;
+        // To store the thumb image url selector of normal state
+        private Selector<string> thumbImageUrlSelector = null;
+        // To store the thumb color of normal state
+        private Color thumbColor = Color.White;
+        // To store the thumb image url of warning state
+        private string warningThumbImageUrl = null;
+        // To store the thumb image url selector of warning state
+        private Selector<string> warningThumbImageUrlSelector = null;
+        // To store the thumb color of warning state
+        private Color warningThumbColor = null;
+        // the discrete value
+        private float discreteValue = 0;
 
         private PanGestureDetector panGestureDetector = null;
         private float currentSlidedOffset;
         private EventHandler<ValueChangedArgs> valueChangedHandler;
         private EventHandler<SlidingFinishedArgs> slidingFinishedHandler;
+        private EventHandler<SliderValueChangedEventArgs> sliderValueChangedHandler;
+        private EventHandler<SliderSlidingStartedEventArgs> sliderSlidingStartedHandler;
+        private EventHandler<SliderSlidingFinishedEventArgs> sliderSlidingFinishedHandler;
         private EventHandler<StateChangedArgs> stateChangedHandler;
 
         bool isFocused = false;
         bool isPressed = false;
 
-        private StringSelector thumbImageURLSelector = new StringSelector();
-
         private void Initialize()
         {
+            AccessibilityHighlightable = true;
+
             currentSlidedOffset = 0;
             isFocused = false;
             isPressed = false;
             LayoutDirectionChanged += OnLayoutDirectionChanged;
+
+            panGestureDetector = new PanGestureDetector();
+            panGestureDetector.Attach(this);
+            panGestureDetector.Detected += OnPanGestureDetected;
         }
 
         private void OnLayoutDirectionChanged(object sender, LayoutDirectionChangedEventArgs e)
@@ -78,14 +131,57 @@ namespace Tizen.NUI.Components
                 {
                     bgTrackImage.Add(slidedTrackImage);
                 }
-
-                if (null != thumbImage)
-                {
-                    slidedTrackImage.Add(thumbImage);
-                }
             }
 
             return slidedTrackImage;
+        }
+
+        private ImageView CreateWarningTrack()
+        {
+            if (null == warningTrackImage)
+            {
+                warningTrackImage = new ImageView()
+                {
+                    WidthResizePolicy = ResizePolicyType.Fixed,
+                    HeightResizePolicy = ResizePolicyType.Fixed
+                };
+
+                if (bgTrackImage != null)
+                {
+                    bgTrackImage.Add(warningTrackImage);
+                }
+
+                if (warningSlidedTrackImage != null)
+                {
+                    warningTrackImage.Add(warningSlidedTrackImage);
+                }
+
+                if (slidedTrackImage != null)
+                {
+                    warningTrackImage.RaiseAbove(slidedTrackImage);
+                }
+            }
+
+            return warningTrackImage;
+        }
+
+        private ImageView CreateWarningSlidedTrack()
+        {
+            if (null == warningSlidedTrackImage)
+            {
+                warningSlidedTrackImage = new ImageView()
+                {
+                    WidthResizePolicy = ResizePolicyType.Fixed,
+                    HeightResizePolicy = ResizePolicyType.Fixed
+                };
+
+                if (warningTrackImage != null)
+                {
+                    warningTrackImage.Add(warningSlidedTrackImage);
+                }
+            }
+
+            return warningSlidedTrackImage;
         }
 
         private TextLabel CreateLowIndicatorText()
@@ -136,6 +232,15 @@ namespace Tizen.NUI.Components
                 {
                     bgTrackImage.Add(slidedTrackImage);
                 }
+                if (null != warningTrackImage)
+                {
+                    bgTrackImage.Add(warningTrackImage);
+                }
+                if (null != thumbImage)
+                {
+                    bgTrackImage.Add(thumbImage);
+                    thumbImage.RaiseToTop();
+                }
 
                 bgTrackImage.TouchEvent += OnTouchEventForBgTrack;
             }
@@ -155,18 +260,57 @@ namespace Tizen.NUI.Components
                     PivotPoint = NUI.PivotPoint.Center,
                     PositionUsesPivotPoint = true
                 };
-                if (slidedTrackImage != null)
+                if (bgTrackImage != null)
                 {
-                    slidedTrackImage.Add(thumbImage);
+                    bgTrackImage.Add(thumbImage);
                 }
+                thumbImage.RaiseToTop();
                 thumbImage.TouchEvent += OnTouchEventForThumb;
-
-                panGestureDetector = new PanGestureDetector();
-                panGestureDetector.Attach(thumbImage);
-                panGestureDetector.Detected += OnPanGestureDetected;
             }
 
             return thumbImage;
+        }
+
+        private ImageView CreateValueIndicator()
+        {
+            if (valueIndicatorImage == null)
+            {
+                valueIndicatorImage = new ImageView()
+                {
+                    PositionUsesPivotPoint = true,
+                    ParentOrigin = Tizen.NUI.ParentOrigin.Center,
+                    PivotPoint = Tizen.NUI.PivotPoint.Center,
+                    WidthResizePolicy = ResizePolicyType.Fixed,
+                    HeightResizePolicy = ResizePolicyType.Fixed,
+                };
+                if (valueIndicatorText != null)
+                {
+                    valueIndicatorImage.Add(valueIndicatorText);
+                }
+                // TODO : ValueIndicator can be a child of Thumb
+                this.Add(valueIndicatorImage);
+            }
+
+            valueIndicatorImage.Hide();
+            return valueIndicatorImage;
+        }
+
+        private TextLabel CreateValueIndicatorText()
+        {
+            if (null == valueIndicatorText)
+            {
+                valueIndicatorText = new TextLabel()
+                {
+                    WidthResizePolicy = ResizePolicyType.Fixed,
+                    HeightResizePolicy = ResizePolicyType.Fixed
+                };
+                if (valueIndicatorImage != null)
+                {
+                    valueIndicatorImage.Add(valueIndicatorText);
+                }
+            }
+
+            return valueIndicatorText;
         }
 
         private void OnPanGestureDetected(object source, PanGestureDetector.DetectedEventArgs e)
@@ -180,6 +324,18 @@ namespace Tizen.NUI.Components
                 else if (direction == DirectionType.Vertical)
                 {
                     currentSlidedOffset = slidedTrackImage.SizeHeight;
+                }
+
+                if (isValueShown)
+                {
+                    valueIndicatorImage.Show();
+                }
+
+                if (null != sliderSlidingStartedHandler)
+                {
+                    SliderSlidingStartedEventArgs args = new SliderSlidingStartedEventArgs();
+                    args.CurrentValue = curValue;
+                    sliderSlidingStartedHandler(this, args);
                 }
                 UpdateState(isFocused, true);
             }
@@ -199,11 +355,23 @@ namespace Tizen.NUI.Components
 
             if (e.PanGesture.State == Gesture.StateType.Finished)
             {
+                if (isValueShown)
+                {
+                    valueIndicatorImage.Hide();
+                }
+
                 if (null != slidingFinishedHandler)
                 {
                     SlidingFinishedArgs args = new SlidingFinishedArgs();
                     args.CurrentValue = curValue;
                     slidingFinishedHandler(this, args);
+                }
+
+                if (null != sliderSlidingFinishedHandler)
+                {
+                    SliderSlidingFinishedEventArgs args = new SliderSlidingFinishedEventArgs();
+                    args.CurrentValue = curValue;
+                    sliderSlidingFinishedHandler(this, args);
                 }
 
                 UpdateState(isFocused, false);
@@ -221,9 +389,21 @@ namespace Tizen.NUI.Components
                     slidedTrackImage.PivotPoint = NUI.PivotPoint.CenterLeft;
                     slidedTrackImage.PositionUsesPivotPoint = true;
                 }
+                if (warningTrackImage != null)
+                {
+                    warningTrackImage.ParentOrigin = NUI.ParentOrigin.CenterRight;
+                    warningTrackImage.PivotPoint = NUI.PivotPoint.CenterRight;
+                    warningTrackImage.PositionUsesPivotPoint = true;
+                }
+                if (warningSlidedTrackImage != null)
+                {
+                    warningSlidedTrackImage.ParentOrigin = NUI.ParentOrigin.CenterLeft;
+                    warningSlidedTrackImage.PivotPoint = NUI.PivotPoint.CenterLeft;
+                    warningSlidedTrackImage.PositionUsesPivotPoint = true;
+                }
                 if (thumbImage != null)
                 {
-                    thumbImage.ParentOrigin = NUI.ParentOrigin.CenterRight;
+                    thumbImage.ParentOrigin = NUI.ParentOrigin.CenterLeft;
                     thumbImage.PivotPoint = NUI.PivotPoint.Center;
                     thumbImage.PositionUsesPivotPoint = true;
                 }
@@ -251,6 +431,19 @@ namespace Tizen.NUI.Components
                     highIndicatorText.PivotPoint = NUI.PivotPoint.CenterRight;
                     highIndicatorText.PositionUsesPivotPoint = true;
                 }
+                if (valueIndicatorImage != null)
+                {
+                    valueIndicatorImage.ParentOrigin = NUI.ParentOrigin.TopLeft;
+                    valueIndicatorImage.PivotPoint = NUI.PivotPoint.BottomCenter;
+                    valueIndicatorImage.PositionUsesPivotPoint = true;
+                }
+                if (valueIndicatorText != null)
+                {
+                    valueIndicatorText.ParentOrigin = NUI.ParentOrigin.TopCenter;
+                    valueIndicatorText.PivotPoint = NUI.PivotPoint.TopCenter;
+                    valueIndicatorText.PositionUsesPivotPoint = true;
+                    valueIndicatorText.Padding = new Extents(0, 0, 5, 0); // TODO : How to set the text as center
+                }
                 if (panGestureDetector != null)
                 {
                     if (!isInitial)
@@ -268,9 +461,21 @@ namespace Tizen.NUI.Components
                     slidedTrackImage.PivotPoint = NUI.PivotPoint.BottomCenter;
                     slidedTrackImage.PositionUsesPivotPoint = true;
                 }
+                if (warningTrackImage != null)
+                {
+                    warningTrackImage.ParentOrigin = NUI.ParentOrigin.TopCenter;
+                    warningTrackImage.PivotPoint = NUI.PivotPoint.TopCenter;
+                    warningTrackImage.PositionUsesPivotPoint = true;
+                }
+                if (warningSlidedTrackImage != null)
+                {
+                    warningSlidedTrackImage.ParentOrigin = NUI.ParentOrigin.BottomCenter;
+                    warningSlidedTrackImage.PivotPoint = NUI.PivotPoint.BottomCenter;
+                    warningSlidedTrackImage.PositionUsesPivotPoint = true;
+                }
                 if (thumbImage != null)
                 {
-                    thumbImage.ParentOrigin = NUI.ParentOrigin.TopCenter;
+                    thumbImage.ParentOrigin = NUI.ParentOrigin.BottomCenter;
                     thumbImage.PivotPoint = NUI.PivotPoint.Center;
                     thumbImage.PositionUsesPivotPoint = true;
                 }
@@ -297,6 +502,19 @@ namespace Tizen.NUI.Components
                     highIndicatorText.ParentOrigin = NUI.ParentOrigin.TopCenter;
                     highIndicatorText.PivotPoint = NUI.PivotPoint.TopCenter;
                     highIndicatorText.PositionUsesPivotPoint = true;
+                }
+                if (valueIndicatorImage != null)
+                {
+                    valueIndicatorImage.ParentOrigin = NUI.ParentOrigin.BottomCenter;
+                    valueIndicatorImage.PivotPoint = NUI.PivotPoint.BottomCenter;
+                    valueIndicatorImage.PositionUsesPivotPoint = true;
+                }
+                if (valueIndicatorText != null)
+                {
+                    valueIndicatorText.ParentOrigin = NUI.ParentOrigin.TopCenter;
+                    valueIndicatorText.PivotPoint = NUI.PivotPoint.TopCenter;
+                    valueIndicatorText.PositionUsesPivotPoint = true;
+                    valueIndicatorText.Padding = new Extents(0, 0, 5, 0); // TODO : How to set the text as center
                 }
                 if (panGestureDetector != null)
                 {
@@ -379,13 +597,13 @@ namespace Tizen.NUI.Components
             }
             else
             {
-                if (lowIndicatorImage != null && Style != null && Style.LowIndicatorImage != null && Style.LowIndicatorImage.Size != null)
+                if (lowIndicatorImage != null && lowIndicatorImage != null && lowIndicatorImage.Size != null)
                 {
-                    lowIndicatorImage.Size = Style.LowIndicatorImage.Size;
+                    lowIndicatorImage.Size = lowIndicatorSize ?? (ViewStyle as SliderStyle)?.LowIndicatorImage.Size;
                 }
-                if (lowIndicatorText != null && Style != null && Style.LowIndicator != null && Style.LowIndicator.Size != null)
+                if (lowIndicatorText != null && lowIndicatorText != null && lowIndicatorText.Size != null)
                 {
-                    lowIndicatorText.Size = Style.LowIndicator.Size;
+                    lowIndicatorText.Size = lowIndicatorSize ?? (ViewStyle as SliderStyle)?.LowIndicator.Size;
                 }
             }
         }
@@ -482,11 +700,59 @@ namespace Tizen.NUI.Components
                 }
                 float slidedTrackLength = (float)BgTrackLength() * ratio;
                 slidedTrackImage.Size2D = new Size2D((int)(slidedTrackLength + round), (int)curTrackThickness); //Add const round to reach Math.Round function.
+                thumbImage.Position = new Position(slidedTrackImage.Size2D.Width, 0);
+                thumbImage.RaiseToTop();
+
+                if (isValueShown)
+                {
+                    valueIndicatorImage.Position = new Position(slidedTrackImage.Size2D.Width, 0);
+                }
             }
             else if (direction == DirectionType.Vertical)
             {
                 float slidedTrackLength = (float)BgTrackLength() * ratio;
-                slidedTrackImage.Size2D = new Size2D((int)(curTrackThickness + round), (int)slidedTrackLength); //Add const round to reach Math.Round function.
+                slidedTrackImage.Size2D = new Size2D((int)curTrackThickness, (int)(slidedTrackLength + round)); //Add const round to reach Math.Round function.
+                thumbImage.Position = new Position(0, -slidedTrackImage.Size2D.Height);
+                thumbImage.RaiseToTop();
+
+                if (isValueShown)
+                {
+                    valueIndicatorImage.Position = new Position(0, -(slidedTrackImage.Size2D.Height + thumbImage.Size.Height / 2));
+                }
+            }
+
+            // Update the track and thumb when the value is over warning value.
+            if (curValue >= warningStartValue)
+            {
+                if (direction == DirectionType.Horizontal)
+                {
+                    warningSlidedTrackImage.Size2D = new Size2D((int)(((curValue - warningStartValue) / 100) * this.Size2D.Width), (int)curTrackThickness);
+                }
+                else if (direction == DirectionType.Vertical)
+                {
+                    warningSlidedTrackImage.Size2D = new Size2D((int)curTrackThickness, (int)(((curValue - warningStartValue) / 100) * this.Size2D.Height));
+                }
+
+                if (warningThumbColor != null && thumbImage.Color.NotEqualTo(warningThumbColor))
+                {
+                    thumbImage.Color = warningThumbColor;
+                }
+                if (warningThumbImageUrl != null && !thumbImage.ResourceUrl.Equals(warningThumbImageUrl))
+                {
+                    thumbImage.ResourceUrl = warningThumbImageUrl;
+                }
+            }
+            else
+            {
+                warningSlidedTrackImage.Size2D = new Size2D(0, 0);
+                if (warningThumbColor != null && thumbImage.Color.EqualTo(warningThumbColor))
+                {
+                    thumbImage.Color = thumbColor;
+                }
+                if (warningThumbImageUrl != null && thumbImage.ResourceUrl.Equals(warningThumbImageUrl))
+                {
+                    thumbImage.ResourceUrl = thumbImageUrl;
+                }
             }
         }
 
@@ -499,9 +765,9 @@ namespace Tizen.NUI.Components
             }
             else
             {
-                if (Style != null && Style.TrackThickness != null)
+                if (ViewStyle is SliderStyle sliderStyle && sliderStyle.TrackThickness != null)
                 {
-                    curTrackThickness = Style.TrackThickness.Value;
+                    curTrackThickness = sliderStyle.TrackThickness.Value;
                 }
             }
             return curTrackThickness;
@@ -516,20 +782,41 @@ namespace Tizen.NUI.Components
             }
             else
             {
-                if (Style != null && Style.TrackPadding != null)
+                if (ViewStyle is SliderStyle sliderStyle && sliderStyle.TrackPadding != null)
                 {
-                    curSpace = Style.TrackPadding.Start;
+                    curSpace = sliderStyle.TrackPadding.Start;
                 }
             }
             return curSpace;
         }
 
+        private void UpdateWarningTrackSize()
+        {
+            if (warningTrackImage == null)
+            {
+                return;
+            }
+
+            int curTrackThickness = (int)CurrentTrackThickness();
+            float warningTrackLength = maxValue - warningStartValue;
+            if (direction == DirectionType.Horizontal)
+            {
+                warningTrackLength = (warningTrackLength / 100) * this.Size2D.Width;
+                warningTrackImage.Size2D = new Size2D((int)warningTrackLength, curTrackThickness);
+            }
+            else if (direction == DirectionType.Vertical)
+            {
+                warningTrackLength = (warningTrackLength / 100) * this.Size2D.Height;
+                warningTrackImage.Size2D = new Size2D(curTrackThickness, (int)warningTrackLength);
+            }
+        }
+
         private IndicatorType CurrentIndicatorType()
         {
             IndicatorType type = IndicatorType.None;
-            if (Style != null)
+            if (ViewStyle is SliderStyle sliderStyle)
             {
-                type = (IndicatorType)Style.IndicatorType;
+                type = (IndicatorType)sliderStyle.IndicatorType;
             }
             return type;
         }
@@ -543,9 +830,9 @@ namespace Tizen.NUI.Components
             }
             else
             {
-                if (Style != null && Style.LowIndicatorImage != null && Style.LowIndicatorImage.Size != null)
+                if (ViewStyle is SliderStyle sliderStyle && sliderStyle.LowIndicatorImage != null && sliderStyle.LowIndicatorImage.Size != null)
                 {
-                    size = Style.LowIndicatorImage.Size;
+                    size = sliderStyle.LowIndicatorImage.Size;
                 }
             }
             return size;
@@ -560,9 +847,9 @@ namespace Tizen.NUI.Components
             }
             else
             {
-                if (Style != null && Style.HighIndicatorImage != null && Style.HighIndicatorImage.Size != null)
+                if (ViewStyle is SliderStyle sliderStyle && sliderStyle.HighIndicatorImage != null && sliderStyle.HighIndicatorImage.Size != null)
                 {
-                    size = Style.HighIndicatorImage.Size;
+                    size = sliderStyle.HighIndicatorImage.Size;
                 }
             }
             return size;
@@ -577,9 +864,9 @@ namespace Tizen.NUI.Components
             }
             else
             {
-                if (Style != null && Style.LowIndicator != null && Style.LowIndicator.Size != null)
+                if (ViewStyle is SliderStyle sliderStyle && sliderStyle.LowIndicator != null && sliderStyle.LowIndicator.Size != null)
                 {
-                    size = Style.LowIndicator.Size;
+                    size = sliderStyle.LowIndicator.Size;
                 }
             }
             return size;
@@ -594,9 +881,9 @@ namespace Tizen.NUI.Components
             }
             else
             {
-                if (Style != null && Style.HighIndicator != null && Style.HighIndicator.Size != null)
+                if (ViewStyle is SliderStyle sliderStyle && sliderStyle.HighIndicator != null && sliderStyle.HighIndicator.Size != null)
                 {
-                    size = Style.HighIndicator.Size;
+                    size = sliderStyle.HighIndicator.Size;
                 }
             }
             return size;

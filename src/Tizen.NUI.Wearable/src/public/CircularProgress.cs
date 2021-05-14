@@ -36,14 +36,12 @@ namespace Tizen.NUI.Wearable
         public static readonly BindableProperty ThicknessProperty = BindableProperty.Create(nameof(Thickness), typeof(float), typeof(CircularProgress), default(float), propertyChanged: (bindable, oldValue, newValue) =>
         {
             var instance = ((CircularProgress)bindable);
-
-            // TODO Set viewStyle.Thickness after style refactoring done.
-
+            instance.CurrentStyle.Thickness = (float)newValue;
             instance.UpdateVisualThickness((float)newValue);
         },
         defaultValueCreator: (bindable) =>
         {
-            return ((CircularProgress)bindable).Style.Thickness;
+            return ((CircularProgress)bindable).CurrentStyle.Thickness;
         });
 
         /// <summary>Bindable property of MaxValue</summary>
@@ -106,14 +104,12 @@ namespace Tizen.NUI.Wearable
         public static readonly BindableProperty TrackColorProperty = BindableProperty.Create(nameof(TrackColor), typeof(Color), typeof(CircularProgress), null, propertyChanged: (bindable, oldValue, newValue) =>
         {
             var instance = (CircularProgress)bindable;
-
-            // TODO : Set viewStyle.TrackColor after style refactoring done.
-
+            instance.CurrentStyle.TrackColor = (Color)newValue;
             instance.UpdateTrackVisualColor((Color)newValue);
         },
         defaultValueCreator: (bindable) =>
         {
-            return ((CircularProgress)bindable).Style.TrackColor;
+            return ((CircularProgress)bindable).CurrentStyle.TrackColor;
         });
 
         /// <summary>Bindable property of ProgressColor</summary>
@@ -121,14 +117,12 @@ namespace Tizen.NUI.Wearable
         public static readonly BindableProperty ProgressColorProperty = BindableProperty.Create(nameof(ProgressColor), typeof(Color), typeof(CircularProgress), null, propertyChanged: (bindable, oldValue, newValue) =>
         {
             var instance = (CircularProgress)bindable;
-
-            // TODO : Set viewStyle.ProgressColor after style refactoring done.
-
+            instance.CurrentStyle.ProgressColor = (Color)newValue;
             instance.UpdateProgressVisualColor((Color)newValue);
         },
         defaultValueCreator: (bindable) =>
         {
-            return ((CircularProgress)bindable).Style.ProgressColor;
+            return ((CircularProgress)bindable).CurrentStyle.ProgressColor;
         });
 
         /// <summary>Bindable property of IsEnabled</summary>
@@ -164,7 +158,11 @@ namespace Tizen.NUI.Wearable
 
         #region Constructors
 
-        static CircularProgress() { }
+        static CircularProgress()
+        {
+            ThemeManager.AddPackageTheme(DefaultThemeCreator.Instance);
+        }
+
         /// <summary>
         /// The constructor of CircularProgress.
         /// Basically, CircularProgress is for full screen. (360 x 360)
@@ -172,7 +170,7 @@ namespace Tizen.NUI.Wearable
         /// User can set its size.
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public CircularProgress() : base(new CircularProgressStyle())
+        public CircularProgress() : base()
         {
             Initialize();
         }
@@ -201,16 +199,6 @@ namespace Tizen.NUI.Wearable
 
 
         #region Properties
-
-        /// <summary>
-        /// Return a copied Style instance of CircularProgress
-        /// </summary>
-        /// <remarks>
-        /// It returns copied Style instance and changing it does not effect to the CircularProgress.
-        /// Style setting is possible by using constructor or the function of ApplyStyle(ViewStyle viewStyle)
-        /// </remarks>
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public new CircularProgressStyle Style => ViewStyle as CircularProgressStyle;
 
         /// <summary>
         /// The thickness of the track and progress.
@@ -357,6 +345,8 @@ namespace Tizen.NUI.Wearable
                 }
             }
         }
+
+        private CircularProgressStyle CurrentStyle => ViewStyle as CircularProgressStyle;
 
         #endregion Properties
 

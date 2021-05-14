@@ -1,7 +1,21 @@
+/*
+ * Copyright(c) 2021 Samsung Electronics Co., Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -48,12 +62,9 @@ namespace Tizen.NUI.Binding
                 object parent = parentValuesProvider.ParentObjects.Skip(1).FirstOrDefault();
                 if (parentValuesProvider.TargetObject is Setter)
                 {
-                    var style = parent as Style;
                     var triggerBase = parent as TriggerBase;
                     var visualState = parent as VisualState;
-                    if (style != null)
-                        type = style.TargetType;
-                    else if (triggerBase != null)
+                    if (triggerBase != null)
                         type = triggerBase.TargetType;
                     else if (visualState != null)
                         type = FindTypeForVisualState(parentValuesProvider, lineinfo);
@@ -64,7 +75,7 @@ namespace Tizen.NUI.Binding
                     type = (parent as TriggerBase).TargetType;
 
                 if (type == null)
-                    throw new XamlParseException($"Can't resolve {parts [0]}", lineinfo);
+                    throw new XamlParseException($"Can't resolve {parts[0]}", lineinfo);
 
                 return ConvertFrom(type, parts[0], lineinfo);
             }
@@ -122,7 +133,8 @@ namespace Tizen.NUI.Binding
             // Skip 1; we would not be making this check if the immediate parent were not a VisualState
 
             // VisualStates must be in a VisualStateGroup
-            if(!(parents[2] is VisualStateGroup)) {
+            if (!(parents[2] is VisualStateGroup))
+            {
                 throw new XamlParseException($"Expected {nameof(VisualStateGroup)} but found {parents[2]}.", lineInfo);
             }
 
@@ -144,13 +156,8 @@ namespace Tizen.NUI.Binding
                 throw new XamlParseException($"Expected {nameof(Setter)} but found {parents[4]}.", lineInfo);
             }
 
-            // These must be part of a Style; verify that 
-            if (!(parents[5] is Style style))
-            {
-                throw new XamlParseException($"Expected {nameof(Style)} but found {parents[5]}.", lineInfo);
-            }
+            throw new XamlParseException("NUI doesn't support VisualState", lineInfo);
 
-            return style.TargetType;
         }
     }
 }
